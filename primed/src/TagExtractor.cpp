@@ -97,8 +97,27 @@ void TagExtractor::printTags(const char* filename)
     g_print ("\n");
 
 	gchar* artist = NULL;
+	gchar* album = NULL;
+	gchar* title = NULL;
+	unsigned int track_number = 0;
+	unsigned int disc_number = 0;
+	double track_gain = 0.0;
+	double album_gain = 0.0;
+	
 	if( !gst_tag_list_get_string( tags, GST_TAG_ARTIST, &artist ) )
 		g_error( " ERROR: No Artist" );
+	if( !gst_tag_list_get_string( tags, GST_TAG_ALBUM, &album ) )
+		g_error( " ERROR: No album" );
+	if( !gst_tag_list_get_string( tags, GST_TAG_TITLE, &title ) )
+		g_error( " ERROR: No title" );
+	if( !gst_tag_list_get_string( tags, GST_TAG_TRACK_NUMBER, &track_number ) )
+		g_error( " ERROR: No track_number" );
+	if( !gst_tag_list_get_string( tags, GST_TAG_ALBUM_VOLUME_NUMBER, &disc_number ) )
+		g_error( " ERROR: No disc_number" );
+	if( !gst_tag_list_get_string( tags, GST_TAG_TRACK_GAIN, &track_gain ) )
+		g_error( " ERROR: No track_gain" );
+	if( !gst_tag_list_get_string( tags, GST_TAG_ALBUM_GAIN, &album_gain ) )
+		g_error( " ERROR: No album_gain" );
 		
 	g_print( "Artist: %s\n", artist );
 	
