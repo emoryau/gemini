@@ -6,7 +6,6 @@
  */
 
 #include "Filesystem.hpp"
-#include <gst/gst.h>
 
 #include <iostream>
 

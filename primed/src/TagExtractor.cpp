@@ -1,12 +1,25 @@
-/* compile with:
- * gcc -o tags tags.c `pkg-config --cflags --libs gstreamer-1.0` */
+/*
+ * TagExtractor.cpp
+ *
+ *  Created on: Jul 28, 2013
+ *      Author: emoryau
+ */
+
+
 #include <gst/gst.h>
 
 class TagExtractor
 {
 public:
   TagExtractor();
+
+	static void printTags(const char* filename);
+
+private:
+	static void onNewPad (GstElement * dec, GstPad * pad, GstElement * fakesink);
+	
 };
+
 
 static void
 print_one_tag (const GstTagList * list, const gchar * tag, gpointer user_data)
@@ -46,8 +59,7 @@ print_one_tag (const GstTagList * list, const gchar * tag, gpointer user_data)
   }
 }
 
-static void
-on_new_pad (GstElement * dec, GstPad * pad, GstElement * fakesink)
+static void TagExractor::onNewPad (GstElement * dec, GstPad * pad, GstElement * fakesink)
 {
   GstPad *sinkpad;
 
@@ -59,27 +71,21 @@ on_new_pad (GstElement * dec, GstPad * pad, GstElement * fakesink)
   gst_object_unref (sinkpad);
 }
 
-int
-main (int argc, char ** argv)
+static void printTags(const char* filename)
 {
   GstElement *pipe, *dec, *sink;
   GstMessage *msg;
 
-  gst_init (&argc, &argv);
-
-  if (argc < 2 || !gst_uri_is_valid (argv[1]))
-    g_error ("Usage: %s file:///path/to/file", argv[0]);
-
   pipe = gst_pipeline_new ("pipeline");
 
   dec = gst_element_factory_make ("uridecodebin", NULL);
-  g_object_set (dec, "uri", argv[1], NULL);
+  g_object_set (dec, "uri", filename, NULL);
   gst_bin_add (GST_BIN (pipe), dec);
 
   sink = gst_element_factory_make ("fakesink", NULL);
   gst_bin_add (GST_BIN (pipe), sink);
 
-  g_signal_connect (dec, "pad-added", G_CALLBACK (on_new_pad), sink);
+  g_signal_connect (dec, "pad-added", G_CALLBACK (TagExtractor::onNewPad), sink);
 
   gst_element_set_state (pipe, GST_STATE_PAUSED);
 
@@ -88,8 +94,7 @@ main (int argc, char ** argv)
 
     msg = gst_bus_timed_pop_filtered (GST_ELEMENT_BUS (pipe),
         GST_CLOCK_TIME_NONE,
-        (GstMessageType)(GST_MESSAGE_ASYNC_DONE | GST_MESSAGE_TAG |
-GST_MESSAGE_ERROR) );
+        (GstMessageType)(GST_MESSAGE_ASYNC_DONE | GST_MESSAGE_TAG | GST_MESSAGE_ERROR) );
 
     if (GST_MESSAGE_TYPE (msg) != GST_MESSAGE_TAG) /* error or async_done */
       break;
