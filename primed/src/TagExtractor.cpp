@@ -63,7 +63,7 @@ void TagExtractor::printOneTag (const GstTagList * list, const gchar * tag, gpoi
   }
 }
 
-void TagExractor::onNewPad (GstElement * dec, GstPad * pad, GstElement * fakesink)
+void TagExtractor::onNewPad (GstElement * dec, GstPad * pad, GstElement * fakesink)
 {
   GstPad *sinkpad;
 
@@ -119,5 +119,4 @@ void TagExtractor::printTags(const char* filename)
   gst_message_unref (msg);
   gst_element_set_state (pipe, GST_STATE_NULL);
   gst_object_unref (pipe);
-  return 0;
 }
