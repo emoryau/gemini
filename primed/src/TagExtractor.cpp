@@ -10,6 +10,99 @@
 
 TagExtractor::TagExtractor()
 {
+	artist = NULL;
+	album = NULL;
+	title = NULL;
+	track_number = 0;
+	disc_number = 0;
+	track_gain = 0.0;
+	album_gain = 0.0;
+	
+	return;
+}
+
+TagExtractor::~TagExtractor()
+{
+	freeData();
+}
+
+void TagExtractor::freeData() {
+	if( artist != NULL )
+		g_free( artist );
+	if( album != NULL )
+		g_free( album );
+	if( title != NULL )
+		g_free( title );
+	artist = NULL;
+	album = NULL;
+	title = NULL;
+	track_number = 0;
+	disc_number = 0;
+	track_gain = 0.0;
+	album_gain = 0.0;
+}
+
+void TagExtractor::readTags( const gchar* filename )
+{
+	freeData();
+	
+	GstElement *pipe, *dec, *sink;
+	GstMessage *msg;
+
+	pipe = gst_pipeline_new ("pipeline");
+
+	dec = gst_element_factory_make ("uridecodebin", NULL);
+	g_object_set (dec, "uri", filename, NULL);
+	gst_bin_add (GST_BIN (pipe), dec);
+
+	sink = gst_element_factory_make ("fakesink", NULL);
+	gst_bin_add (GST_BIN (pipe), sink);
+
+	g_signal_connect (dec, "pad-added", G_CALLBACK (TagExtractor::onNewPad), sink);
+
+	gst_element_set_state (pipe, GST_STATE_PAUSED);
+
+	while (TRUE) {
+		 GstTagList *tags = NULL;
+
+		 msg = gst_bus_timed_pop_filtered (GST_ELEMENT_BUS (pipe),
+		     GST_CLOCK_TIME_NONE,
+		     (GstMessageType)(GST_MESSAGE_ASYNC_DONE | GST_MESSAGE_TAG | GST_MESSAGE_ERROR) );
+
+		if (GST_MESSAGE_TYPE (msg) != GST_MESSAGE_TAG) /* error or async_done */
+			break;
+
+		gst_message_parse_tag (msg, &tags);
+
+		g_print ("%s", GST_OBJECT_NAME (msg->src));
+
+		if( !gst_tag_list_get_string( tags, GST_TAG_ARTIST, &artist ) )
+			g_print( " ERROR: No Artist " );
+		if( !gst_tag_list_get_string( tags, GST_TAG_ALBUM, &album ) )
+			g_print( " ERROR: No album" );
+		if( !gst_tag_list_get_string( tags, GST_TAG_TITLE, &title ) )
+			g_print( " ERROR: No title" );
+		if( !gst_tag_list_get_uint( tags, GST_TAG_TRACK_NUMBER, &track_number ) )
+			g_print( " ERROR: No track_number" );
+		if( !gst_tag_list_get_uint( tags, GST_TAG_ALBUM_VOLUME_NUMBER, &disc_number ) )
+			disc_number=1;
+		if( !gst_tag_list_get_double( tags, GST_TAG_TRACK_GAIN, &track_gain ) )
+			g_print( " ERROR: No track_gain" );
+		if( !gst_tag_list_get_double( tags, GST_TAG_ALBUM_GAIN, &album_gain ) )
+			g_print( " ERROR: No album_gain" );
+		g_print( "\n" );
+
+		gst_tag_list_unref (tags);
+
+		gst_message_unref (msg);
+	};
+
+	if (GST_MESSAGE_TYPE (msg) == GST_MESSAGE_ERROR)
+		g_error ("Got error");
+
+	gst_message_unref (msg);
+	gst_element_set_state (pipe, GST_STATE_NULL);
+	gst_object_unref (pipe);	
 	return;
 }
 
@@ -62,74 +155,8 @@ void TagExtractor::onNewPad (GstElement * dec, GstPad * pad, GstElement * fakesi
   gst_object_unref (sinkpad);
 }
 
-void TagExtractor::printTags(const char* filename)
+void TagExtractor::printTags( GstTagList* tags )
 {
-  GstElement *pipe, *dec, *sink;
-  GstMessage *msg;
-
-  pipe = gst_pipeline_new ("pipeline");
-
-  dec = gst_element_factory_make ("uridecodebin", NULL);
-  g_object_set (dec, "uri", filename, NULL);
-  gst_bin_add (GST_BIN (pipe), dec);
-
-  sink = gst_element_factory_make ("fakesink", NULL);
-  gst_bin_add (GST_BIN (pipe), sink);
-
-  g_signal_connect (dec, "pad-added", G_CALLBACK (TagExtractor::onNewPad), sink);
-
-  gst_element_set_state (pipe, GST_STATE_PAUSED);
-
-  while (TRUE) {
-    GstTagList *tags = NULL;
-
-    msg = gst_bus_timed_pop_filtered (GST_ELEMENT_BUS (pipe),
-        GST_CLOCK_TIME_NONE,
-        (GstMessageType)(GST_MESSAGE_ASYNC_DONE | GST_MESSAGE_TAG | GST_MESSAGE_ERROR) );
-
-    if (GST_MESSAGE_TYPE (msg) != GST_MESSAGE_TAG) /* error or async_done */
-      break;
-
-    gst_message_parse_tag (msg, &tags);
-
-    g_print ("Got tags from element %s:\n", GST_OBJECT_NAME (msg->src));
-    gst_tag_list_foreach (tags, TagExtractor::printOneTag, NULL);
-    g_print ("\n");
-
-	gchar* artist = NULL;
-	gchar* album = NULL;
-	gchar* title = NULL;
-	guint track_number = 0;
-	guint disc_number = 0;
-	gdouble track_gain = 0.0;
-	gdouble album_gain = 0.0;
-	
-	if( !gst_tag_list_get_string( tags, GST_TAG_ARTIST, &artist ) )
-		g_error( " ERROR: No Artist" );
-	if( !gst_tag_list_get_string( tags, GST_TAG_ALBUM, &album ) )
-		g_error( " ERROR: No album" );
-	if( !gst_tag_list_get_string( tags, GST_TAG_TITLE, &title ) )
-		g_error( " ERROR: No title" );
-	if( !gst_tag_list_get_uint( tags, GST_TAG_TRACK_NUMBER, &track_number ) )
-		g_error( " ERROR: No track_number" );
-	if( !gst_tag_list_get_uint( tags, GST_TAG_ALBUM_VOLUME_NUMBER, &disc_number ) )
-		disc_number=1;
-	if( !gst_tag_list_get_double( tags, GST_TAG_TRACK_GAIN, &track_gain ) )
-		g_error( " ERROR: No track_gain" );
-	if( !gst_tag_list_get_double( tags, GST_TAG_ALBUM_GAIN, &album_gain ) )
-		g_error( " ERROR: No album_gain" );
-		
-	g_print( "Artist: %s\n", artist );
-	
-    gst_tag_list_unref (tags);
-
-    gst_message_unref (msg);
-  };
-
-  if (GST_MESSAGE_TYPE (msg) == GST_MESSAGE_ERROR)
-    g_error ("Got error");
-
-  gst_message_unref (msg);
-  gst_element_set_state (pipe, GST_STATE_NULL);
-  gst_object_unref (pipe);
+	gst_tag_list_foreach (tags, TagExtractor::printOneTag, NULL);
+	g_print ("\n");
 }

@@ -14,21 +14,29 @@
 int main( int argc, char** argv ) {
 	gst_init (&argc, &argv);
 	
-	Filesystem directory_crawler( "/home/emoryau/testmusic" );
+	gchar* folder = "/home/emoryau/testmusic"; // TODO: better default
+	
+	if( argc > 1 )
+		folder = argv[1];
+		
+	Filesystem directory_crawler( folder );
+	TagExtractor extractor();
 
-	std::cout << "Files\n";
+	g_print( "Scanning %s\n", folder );
+
+	// TODO: Database link
 
 	for( Filesystem::iterator it = directory_crawler.begin(); it != directory_crawler.end(); ++it ) {
+		// Parse file
 		std::string filename;
 		filename += "file://";
 		filename += *it;
 		std::cout << filename << "\n";
-		TagExtractor::printTags(filename.c_str());
+		TagExtractor::readTags(filename.c_str());
+
+		// TODO: insert/update database
 	}
 
-	// Database link
-	// Load file
-	// Parse file
-	// insert/update database
+	g_print( "Finished\n" );
 	return 0;
 }
