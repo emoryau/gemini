@@ -21,12 +21,12 @@ private:
 	
 };
 
-TagExtractor()
+TagExtractor::TagExtractor()
 {
 	return;
 }
 
-static void TagExtractor::printOneTag (const GstTagList * list, const gchar * tag, gpointer user_data)
+void TagExtractor::printOneTag (const GstTagList * list, const gchar * tag, gpointer user_data)
 {
   int i, num;
 
@@ -63,7 +63,7 @@ static void TagExtractor::printOneTag (const GstTagList * list, const gchar * ta
   }
 }
 
-static void TagExractor::onNewPad (GstElement * dec, GstPad * pad, GstElement * fakesink)
+void TagExractor::onNewPad (GstElement * dec, GstPad * pad, GstElement * fakesink)
 {
   GstPad *sinkpad;
 
@@ -75,7 +75,7 @@ static void TagExractor::onNewPad (GstElement * dec, GstPad * pad, GstElement * 
   gst_object_unref (sinkpad);
 }
 
-static void TagExtractor::printTags(const char* filename)
+void TagExtractor::printTags(const char* filename)
 {
   GstElement *pipe, *dec, *sink;
   GstMessage *msg;
