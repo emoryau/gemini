@@ -50,6 +50,12 @@ void TagExtractor::printOneTag (const GstTagList * list, const gchar * tag, gpoi
   }
 }
 
+TagExtractor::getArtist( const GstTagList* list )
+{
+	gchar* artist;
+	gst_tag_list_get_string( list, GST_TAG_ARTIST, &artist );
+}
+
 void TagExtractor::onNewPad (GstElement * dec, GstPad * pad, GstElement * fakesink)
 {
   GstPad *sinkpad;
@@ -95,6 +101,13 @@ void TagExtractor::printTags(const char* filename)
     g_print ("Got tags from element %s:\n", GST_OBJECT_NAME (msg->src));
     gst_tag_list_foreach (tags, TagExtractor::printOneTag, NULL);
     g_print ("\n");
+
+	gchar* artist = NULL;
+	if( !gst_tag_list_get_string( tags, GST_TAG_ARTIST, &artist ) )
+		g_error( " ERROR: No Artist" );
+		
+	g_print( "Artist: %s\n", artist );
+	
     gst_tag_list_unref (tags);
 
     gst_message_unref (msg);
