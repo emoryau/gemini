@@ -1,14 +1,12 @@
 Filesystem.o: Filesystem.cpp Filesystem.hpp \
- /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/string \
+ /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/list \
+ /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/stl_algobase.h \
  /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/i686-pc-linux-gnu/bits/c++config.h \
  /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/i686-pc-linux-gnu/bits/os_defines.h \
  /usr/include/features.h /usr/include/stdc-predef.h \
  /usr/include/sys/cdefs.h /usr/include/bits/wordsize.h \
  /usr/include/gnu/stubs.h /usr/include/gnu/stubs-32.h \
  /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/i686-pc-linux-gnu/bits/cpu_defines.h \
- /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/stringfwd.h \
- /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/char_traits.h \
- /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/stl_algobase.h \
  /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/functexcept.h \
  /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/exception_defines.h \
  /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/cpp_type_traits.h \
@@ -21,6 +19,18 @@ Filesystem.o: Filesystem.cpp Filesystem.hpp \
  /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/stl_iterator_base_funcs.h \
  /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/stl_iterator.h \
  /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/debug/debug.h \
+ /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/allocator.h \
+ /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/i686-pc-linux-gnu/bits/c++allocator.h \
+ /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/ext/new_allocator.h \
+ /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/new \
+ /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/exception \
+ /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/range_access.h \
+ /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/stl_list.h \
+ /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/initializer_list \
+ /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/list.tcc \
+ /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/string \
+ /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/stringfwd.h \
+ /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/char_traits.h \
  /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/postypes.h \
  /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/cwchar \
  /usr/include/wchar.h /usr/include/stdio.h \
@@ -28,11 +38,6 @@ Filesystem.o: Filesystem.cpp Filesystem.hpp \
  /usr/include/bits/wchar.h \
  /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/include/stddef.h \
  /usr/include/xlocale.h \
- /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/allocator.h \
- /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/i686-pc-linux-gnu/bits/c++allocator.h \
- /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/ext/new_allocator.h \
- /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/new \
- /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/exception \
  /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/localefwd.h \
  /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/i686-pc-linux-gnu/bits/c++locale.h \
  /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/clocale \
@@ -47,7 +52,6 @@ Filesystem.o: Filesystem.cpp Filesystem.hpp \
  /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/cxxabi_forced.h \
  /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/stl_function.h \
  /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/backward/binders.h \
- /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/range_access.h \
  /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/basic_string.h \
  /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/ext/atomicity.h \
  /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/i686-pc-linux-gnu/bits/gthr.h \
@@ -59,7 +63,6 @@ Filesystem.o: Filesystem.cpp Filesystem.hpp \
  /usr/include/bits/posix_opt.h /usr/include/bits/environments.h \
  /usr/include/bits/confname.h /usr/include/getopt.h \
  /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/i686-pc-linux-gnu/bits/atomic_word.h \
- /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/initializer_list \
  /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/basic_string.tcc \
  /usr/include/string.h /usr/include/libio.h /usr/include/_G_config.h \
  /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h \
@@ -75,7 +78,9 @@ Filesystem.o: Filesystem.cpp Filesystem.hpp \
 
 Filesystem.hpp:
 
-/usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/string:
+/usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/list:
+
+/usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/stl_algobase.h:
 
 /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/i686-pc-linux-gnu/bits/c++config.h:
 
@@ -94,12 +99,6 @@ Filesystem.hpp:
 /usr/include/gnu/stubs-32.h:
 
 /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/i686-pc-linux-gnu/bits/cpu_defines.h:
-
-/usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/stringfwd.h:
-
-/usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/char_traits.h:
-
-/usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/stl_algobase.h:
 
 /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/functexcept.h:
 
@@ -125,6 +124,30 @@ Filesystem.hpp:
 
 /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/debug/debug.h:
 
+/usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/allocator.h:
+
+/usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/i686-pc-linux-gnu/bits/c++allocator.h:
+
+/usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/ext/new_allocator.h:
+
+/usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/new:
+
+/usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/exception:
+
+/usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/range_access.h:
+
+/usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/stl_list.h:
+
+/usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/initializer_list:
+
+/usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/list.tcc:
+
+/usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/string:
+
+/usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/stringfwd.h:
+
+/usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/char_traits.h:
+
 /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/postypes.h:
 
 /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/cwchar:
@@ -140,16 +163,6 @@ Filesystem.hpp:
 /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/include/stddef.h:
 
 /usr/include/xlocale.h:
-
-/usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/allocator.h:
-
-/usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/i686-pc-linux-gnu/bits/c++allocator.h:
-
-/usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/ext/new_allocator.h:
-
-/usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/new:
-
-/usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/exception:
 
 /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/localefwd.h:
 
@@ -187,8 +200,6 @@ Filesystem.hpp:
 
 /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/backward/binders.h:
 
-/usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/range_access.h:
-
 /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/basic_string.h:
 
 /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/ext/atomicity.h:
@@ -224,8 +235,6 @@ Filesystem.hpp:
 /usr/include/getopt.h:
 
 /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/i686-pc-linux-gnu/bits/atomic_word.h:
-
-/usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/initializer_list:
 
 /usr/lib/gcc/i686-pc-linux-gnu/4.6.2/../../../../include/c++/4.6.2/bits/basic_string.tcc:
 

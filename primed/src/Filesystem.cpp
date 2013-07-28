@@ -11,13 +11,12 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <dirent.h>
-
+#include <list>
 #include <fts.h>
 #include <errno.h>
 
 Filesystem::Filesystem( const char* workingDirectory ) {
-	//addDirectory( workingDirectory );
-
+	addDirectory( workingDirectory );
 }
 
 Filesystem::Filesystem() {
@@ -42,11 +41,7 @@ void Filesystem::addDirectory( const char *workingDirectory ) {
 		if( node->fts_level > 0 && node->fts_name[0] == '.' )
 			fts_set( tree, node, FTS_SKIP );
 		else if( node->fts_info & FTS_F ) {
-			printf( "got file named %s at depth %d, "
-					"accessible via %s from the current directory "
-					"or via %s from the original starting directory\n", node->fts_name, node->fts_level, node->fts_accpath, node->fts_path );
-			/* if fts_open is not given FTS_NOCHDIR,
-			 * fts may change the program's current working directory */
+			filenames.push_back( node->fts_path );
 		}
 	}
 	if( errno ) {
