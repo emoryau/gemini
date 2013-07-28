@@ -11,18 +11,22 @@
 class TagExtractor
 {
 public:
-  TagExtractor();
+	TagExtractor();
 
 	static void printTags(const char* filename);
 
 private:
 	static void onNewPad (GstElement * dec, GstPad * pad, GstElement * fakesink);
+	static void printOneTag (const GstTagList * list, const gchar * tag, gpointer user_data);
 	
 };
 
+TagExtractor()
+{
+	return;
+}
 
-static void
-print_one_tag (const GstTagList * list, const gchar * tag, gpointer user_data)
+static void TagExtractor::printOneTag (const GstTagList * list, const gchar * tag, gpointer user_data)
 {
   int i, num;
 
@@ -71,7 +75,7 @@ static void TagExractor::onNewPad (GstElement * dec, GstPad * pad, GstElement * 
   gst_object_unref (sinkpad);
 }
 
-static void printTags(const char* filename)
+static void TagExtractor::printTags(const char* filename)
 {
   GstElement *pipe, *dec, *sink;
   GstMessage *msg;
@@ -102,7 +106,7 @@ static void printTags(const char* filename)
     gst_message_parse_tag (msg, &tags);
 
     g_print ("Got tags from element %s:\n", GST_OBJECT_NAME (msg->src));
-    gst_tag_list_foreach (tags, print_one_tag, NULL);
+    gst_tag_list_foreach (tags, TagExtractor::printOneTag, NULL);
     g_print ("\n");
     gst_tag_list_unref (tags);
 
