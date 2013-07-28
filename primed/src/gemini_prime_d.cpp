@@ -14,13 +14,13 @@
 int main( int argc, char** argv ) {
 	gst_init (&argc, &argv);
 	
-	gchar* folder = "/home/emoryau/testmusic"; // TODO: better default
+	const char* folder = "/home/emoryau/testmusic"; // TODO: better default
 	
 	if( argc > 1 )
 		folder = argv[1];
 		
 	Filesystem directory_crawler( folder );
-	TagExtractor extractor();
+	TagExtractor extractor;
 
 	g_print( "Scanning %s\n", folder );
 
@@ -32,7 +32,7 @@ int main( int argc, char** argv ) {
 		filename += "file://";
 		filename += *it;
 		std::cout << filename << "\n";
-		TagExtractor::readTags(filename.c_str());
+		extractor.readTags(filename.c_str());
 
 		// TODO: insert/update database
 	}
