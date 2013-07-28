@@ -35,7 +35,7 @@ print_one_tag (const GstTagList * list, const gchar * tag, gpointer user_data)
 
       g_print ("\t%20s : buffer of size %u\n", tag, buffer_size);
     } else if (GST_VALUE_HOLDS_DATE_TIME (val)) {
-      GstDateTime *dt = g_value_get_boxed (val);
+      GstDateTime *dt = (GstDateTime*)g_value_get_boxed (val);
       gchar *dt_str = gst_date_time_to_iso8601_string (dt);
 
       g_print ("\t%20s : %s\n", tag, dt_str);
@@ -88,7 +88,8 @@ main (int argc, char ** argv)
 
     msg = gst_bus_timed_pop_filtered (GST_ELEMENT_BUS (pipe),
         GST_CLOCK_TIME_NONE,
-        GST_MESSAGE_ASYNC_DONE | GST_MESSAGE_TAG | GST_MESSAGE_ERROR);
+        (GstMessageType)(GST_MESSAGE_ASYNC_DONE | GST_MESSAGE_TAG |
+GST_MESSAGE_ERROR) );
 
     if (GST_MESSAGE_TYPE (msg) != GST_MESSAGE_TAG) /* error or async_done */
       break;
