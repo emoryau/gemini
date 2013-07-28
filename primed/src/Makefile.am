@@ -1,2 +1,2 @@
 bin_PROGRAMS=gemini_prime_d
-gemini_prime_d_SOURCES=gemini_prime_d.cpp Filesystem.cpp
+gemini_prime_d_SOURCES=gemini_prime_d.cpp Filesystem.cpp TagExtractor.cpp
