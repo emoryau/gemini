@@ -50,12 +50,6 @@ void TagExtractor::printOneTag (const GstTagList * list, const gchar * tag, gpoi
   }
 }
 
-TagExtractor::getArtist( const GstTagList* list )
-{
-	gchar* artist;
-	gst_tag_list_get_string( list, GST_TAG_ARTIST, &artist );
-}
-
 void TagExtractor::onNewPad (GstElement * dec, GstPad * pad, GstElement * fakesink)
 {
   GstPad *sinkpad;
