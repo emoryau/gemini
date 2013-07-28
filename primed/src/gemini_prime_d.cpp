@@ -6,10 +6,13 @@
  */
 
 #include "Filesystem.hpp"
+#include <gst/gst.h>
 
 #include <iostream>
 
 int main( int argc, char** argv ) {
+	gst_init (&argc, &argv);
+	
 	Filesystem directory_crawler( "/home/emoryau/testmusic" );
 
 	std::cout << "Files\n";
@@ -19,7 +22,6 @@ int main( int argc, char** argv ) {
 	}
 
 	// Database link
-
 	// Load file
 	// Parse file
 	// insert/update database

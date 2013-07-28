@@ -11,6 +11,7 @@ AM_INIT_AUTOMAKE
 AC_PROG_CXX
 
 # Checks for libraries.
+PKG_CHECK_MODULES([DEPS], [gstreamer-1.0 >= 1.0])
 
 # Checks for header files.
 
