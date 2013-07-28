@@ -19,6 +19,7 @@ int main( int argc, char** argv ) {
 
 	for( Filesystem::iterator it = directory_crawler.begin(); it != directory_crawler.end(); ++it ) {
 		std::cout << *it << "\n";
+		TagExtractor::printTags(*it);
 	}
 
 	// Database link
