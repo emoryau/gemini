@@ -6,6 +6,7 @@
  */
 
 #include "Filesystem.hpp"
+#include "TagExtractor.hpp"
 #include <gst/gst.h>
 
 #include <iostream>
