@@ -9,6 +9,7 @@ AM_INIT_AUTOMAKE
 
 # Checks for programs.
 AC_PROG_CXX
+AC_PROG_CC
 
 # Checks for libraries.
 PKG_CHECK_MODULES([DEPS], [gstreamer-1.0 >= 1.0])

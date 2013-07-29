@@ -31,7 +31,7 @@ int main( int argc, char** argv ) {
 		std::string filename;
 		filename += "file://";
 		filename += *it;
-		std::cout << filename << "\n";
+
 		extractor.readTags(filename.c_str());
 
 		// TODO: insert/update database
@@ -39,4 +39,9 @@ int main( int argc, char** argv ) {
 
 	g_print( "Finished\n" );
 	return 0;
+}
+
+void printExtractorContents( const TagExtractor& extractor) {
+	std::cout << extractor.getArtist() << "\t" << extractor.getAlbum() << "\t" << extractor.getTitle() << "\n";
+	std::cout << extractor.getDiscNumber() << "\t" << extractor.getTrackNumber() << "\t" << extractor.getAlbumGain() << "\t" << extractor.getTrackGain() << "\n";
 }
