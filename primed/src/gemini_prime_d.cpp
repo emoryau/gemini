@@ -11,6 +11,21 @@
 
 #include <iostream>
 
+const char* extension_blacklist[] = { ".jpg", ".cue", NULL };
+
+
+bool isInBlacklist( const std::string& subject ) {
+	const char** extension_comparator = extension_blacklist;
+	while( *extension_comparator != NULL ) {
+		if( subject.rfind( *extension_comparator ) != std::string::npos ) {
+			return true;
+		}
+		extension_comparator++;
+	}
+	return false;
+}
+
+
 int main( int argc, char** argv ) {
 	gst_init (&argc, &argv);
 	
@@ -28,16 +43,18 @@ int main( int argc, char** argv ) {
 
 	for( Filesystem::iterator it = directory_crawler.begin(); it != directory_crawler.end(); ++it ) {
 		// Parse file
-		std::string filename;
-		filename += "file://";
-		filename += *it;
+		std::string filename = *it;
 
-		extractor.readTags(filename.c_str());
+		if( isInBlacklist( filename ) )
+			continue;
+
+		extractor.readTags( filename.c_str() );
 
 		// TODO: insert/update database
 	}
 
 	g_print( "Finished\n" );
+
 	return 0;
 }
 

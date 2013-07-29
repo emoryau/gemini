@@ -46,10 +46,13 @@ void TagExtractor::readTags( const gchar* filename ) {
 	GstElement *pipe, *dec, *sink;
 	GstMessage *msg;
 
+	GError* conversion_error = NULL;
+	gchar* file_uri = g_filename_to_uri( filename, NULL, &conversion_error );
+
 	pipe = gst_pipeline_new( "pipeline" );
 
 	dec = gst_element_factory_make( "uridecodebin", NULL );
-	g_object_set( dec, "uri", filename, NULL );
+	g_object_set( dec, "uri", file_uri, NULL );
 	gst_bin_add( GST_BIN (pipe), dec );
 
 	sink = gst_element_factory_make( "fakesink", NULL );
@@ -125,6 +128,9 @@ void TagExtractor::readTags( const gchar* filename ) {
 	gst_message_unref( msg );
 	gst_element_set_state( pipe, GST_STATE_NULL );
 	gst_object_unref( pipe );
+	if( conversion_error != NULL )
+		g_error_free( conversion_error );
+	g_free( file_uri );
 	return;
 }
 

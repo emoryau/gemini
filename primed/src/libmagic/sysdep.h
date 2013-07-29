@@ -23,7 +23,7 @@
 #ifndef INCLUDED_SYSDEP_H
 #define INCLUDED_SYSDEP_H
 
-#define _GNU_SOURCE
+//#define _GNU_SOURCE
 
 /* standard integer sizes */
 #if (__GLIBC__ >= 2)
