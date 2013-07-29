@@ -46,9 +46,10 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_gemini_prime_d_OBJECTS = gemini_prime_d.$(OBJEXT) \
-	Filesystem.$(OBJEXT)
+	Filesystem.$(OBJEXT) TagExtractor.$(OBJEXT)
 gemini_prime_d_OBJECTS = $(am_gemini_prime_d_OBJECTS)
-gemini_prime_d_LDADD = $(LDADD)
+am__DEPENDENCIES_1 =
+gemini_prime_d_DEPENDENCIES = $(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -76,6 +77,8 @@ CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
+DEPS_CFLAGS = @DEPS_CFLAGS@
+DEPS_LIBS = @DEPS_LIBS@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
@@ -100,6 +103,9 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+PKG_CONFIG = @PKG_CONFIG@
+PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
+PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
@@ -146,7 +152,9 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-gemini_prime_d_SOURCES = gemini_prime_d.cpp Filesystem.cpp
+AM_CPPFLAGS = $(DEPS_CFLAGS)
+gemini_prime_d_LDADD = $(DEPS_LIBS)
+gemini_prime_d_SOURCES = gemini_prime_d.cpp Filesystem.cpp TagExtractor.cpp
 all: all-am
 
 .SUFFIXES:
@@ -229,6 +237,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Filesystem.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TagExtractor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gemini_prime_d.Po@am__quote@
 
 .cpp.o:

@@ -74,8 +74,6 @@ void TagExtractor::readTags( const gchar* filename )
 
 		gst_message_parse_tag (msg, &tags);
 
-		g_print ("%s", GST_OBJECT_NAME (msg->src));
-
 		if( !gst_tag_list_get_string( tags, GST_TAG_ARTIST, &artist ) )
 			g_print( " ERROR: No Artist " );
 		if( !gst_tag_list_get_string( tags, GST_TAG_ALBUM, &album ) )
@@ -91,6 +89,8 @@ void TagExtractor::readTags( const gchar* filename )
 		if( !gst_tag_list_get_double( tags, GST_TAG_ALBUM_GAIN, &album_gain ) )
 			g_print( " ERROR: No album_gain" );
 		g_print( "\n" );
+
+		printTags( tags );
 
 		gst_tag_list_unref (tags);
 
