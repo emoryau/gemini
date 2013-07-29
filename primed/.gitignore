@@ -3,7 +3,6 @@
 config.status
 config.log
 Makefile
-Makefile.in
 config.h
 aclocal.m4
 debug
