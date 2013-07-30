@@ -11,7 +11,7 @@
 
 #include <iostream>
 
-const char* extension_blacklist[] = { ".jpg", ".cue", NULL };
+const char* extension_blacklist[] = { ".jpg", ".cue", ".db", ".m3u", ".ini", ".sfv", ".pdf", ".log", ".txt", NULL };
 
 
 bool isInBlacklist( const std::string& subject ) {

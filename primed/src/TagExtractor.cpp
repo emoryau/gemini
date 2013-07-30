@@ -97,6 +97,7 @@ void TagExtractor::readTags( const gchar* filename ) {
     GError *err = NULL;
     gchar *dbg_info = NULL;
 
+    g_printerr( "==\t%s\n", filename );
     gst_message_parse_error (msg, &err, &dbg_info);
     g_printerr ("ERROR from element %s: %s\n",
         GST_OBJECT_NAME (msg->src), err->message);
