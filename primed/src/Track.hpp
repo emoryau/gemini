@@ -9,6 +9,8 @@
 #define TRACK_HPP_
 
 #include <string>
+#include "Artist.hpp"
+#include "Album.hpp"
 
 class Track {
 public:
@@ -21,8 +23,8 @@ public:
 	std::string artFilename;
 	std::string name;
 	float replayGain;
-	void* artist;
-	void* album;
+	const Artist* artist;
+	const Album* album;
 };
 
 #endif /* TRACK_HPP_ */

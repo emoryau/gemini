@@ -23,6 +23,8 @@ public:
 
 private:
 	std::set<Track*> tracks;
+	std::set<Artist*> artists;
+	std::set<Album*> albums;
 };
 
 #endif /* TRACKMANAGER_HPP_ */
