@@ -11,3 +11,11 @@
 *.lai
 *.la
 *.a
+
+# Editor Files
+*.swp
+
+# Build generated files
+stamp-h1
+.deps/
+gemini_prime_d

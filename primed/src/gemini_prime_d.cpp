@@ -7,6 +7,8 @@
 
 #include "Filesystem.hpp"
 #include "TagExtractor.hpp"
+#include "MetadataStore.hpp"
+#include "TrackManager.hpp"
 #include <gst/gst.h>
 
 #include <iostream>
@@ -36,10 +38,13 @@ int main( int argc, char** argv ) {
 		
 	Filesystem directory_crawler( folder );
 	TagExtractor extractor;
+	MetadataStore store;
+	TrackManager trackManager;
 
 	g_print( "Scanning %s\n", folder );
 
 	// TODO: Database link
+	// Create some DAO's to talk to the db
 
 	for( Filesystem::iterator it = directory_crawler.begin(); it != directory_crawler.end(); ++it ) {
 		// Parse file
@@ -49,6 +54,7 @@ int main( int argc, char** argv ) {
 			continue;
 
 		extractor.readTags( filename.c_str() );
+		trackManager.Add(extractor);
 
 		// TODO: insert/update database
 	}

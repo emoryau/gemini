@@ -6,9 +6,11 @@
  */
 
 #include "TagExtractor.hpp"
+#include <glib.h>
 #include <gst/gst.h>
 
 TagExtractor::TagExtractor() {
+	file_uri = NULL;
 	artist = NULL;
 	album = NULL;
 	title = NULL;
@@ -25,12 +27,15 @@ TagExtractor::~TagExtractor() {
 }
 
 void TagExtractor::freeData() {
+	if( file_uri != NULL )
+		g_free( file_uri );
 	if( artist != NULL )
 		g_free( artist );
 	if( album != NULL )
 		g_free( album );
 	if( title != NULL )
 		g_free( title );
+	file_uri = NULL;
 	artist = NULL;
 	album = NULL;
 	title = NULL;
@@ -47,7 +52,7 @@ void TagExtractor::readTags( const gchar* filename ) {
 	GstMessage *msg;
 
 	GError* conversion_error = NULL;
-	gchar* file_uri = g_filename_to_uri( filename, NULL, &conversion_error );
+	file_uri = g_filename_to_uri( filename, NULL, &conversion_error );
 
 	pipe = gst_pipeline_new( "pipeline" );
 
@@ -131,7 +136,6 @@ void TagExtractor::readTags( const gchar* filename ) {
 	gst_object_unref( pipe );
 	if( conversion_error != NULL )
 		g_error_free( conversion_error );
-	g_free( file_uri );
 	return;
 }
 

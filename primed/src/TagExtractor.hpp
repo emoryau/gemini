@@ -5,6 +5,8 @@
  *      Author: emoryau
  */
 
+#ifndef TAGEXTRACTOR_HPP_
+#define TAGEXTRACTOR_HPP_
 
 #include <gst/gst.h>
 
@@ -19,6 +21,7 @@ public:
 
 	void printTags( GstTagList* tags );
 	
+	const gchar* getFile_uri() const { return file_uri; };
 	const gchar* getArtist() const { return artist; };
 	const gchar* getAlbum() const { return album; };
 	const gchar* getTitle() const { return title; };
@@ -33,6 +36,7 @@ private:
 	static void parseOneTag( const GstTagList * list, const gchar * tag, gpointer user_data );
 
 
+	gchar* file_uri;
 	gchar* artist;
 	gchar* album;
 	gchar* title;
@@ -41,3 +45,6 @@ private:
 	gdouble track_gain;
 	gdouble album_gain;
 };
+
+#endif /* TAGEXTRACTOR_HPP_ */
+
