@@ -1,3 +1,4 @@
+AUTOMAKE_OPTIONS = subdir-objects
 bin_PROGRAMS=gemini_prime_d
 AM_CPPFLAGS=$(DEPS_CFLAGS) $(SQLITE_CFLAGS)
 gemini_prime_d_LDADD=$(DEPS_LIBS) $(SQLITE_LIBS)
