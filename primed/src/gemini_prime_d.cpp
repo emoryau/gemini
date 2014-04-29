@@ -45,6 +45,12 @@ int main( int argc, char** argv ) {
 
 	// TODO: Database link
 	// Create some DAO's to talk to the db
+	try {
+		store.open("/home/emoryau/test.sqlite");
+	} catch (char* e) {
+		g_error("DB opening threw:\n%s", e);
+		return 1;
+	}
 
 	for( Filesystem::iterator it = directory_crawler.begin(); it != directory_crawler.end(); ++it ) {
 		// Parse file
@@ -54,7 +60,6 @@ int main( int argc, char** argv ) {
 			continue;
 
 		extractor.readTags( filename.c_str() );
-		trackManager.Add(extractor);
 
 		// TODO: insert/update database
 	}

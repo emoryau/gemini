@@ -9,9 +9,12 @@
 #define ARTIST_HPP_
 
 #include <string>
+#include "TagExtractor.hpp"
 
 class Artist { 
 public:
+	Artist(TagExtractor& te);
+
         bool operator< (const Artist &a) const { return name < a.name; };
 
         std::string name;

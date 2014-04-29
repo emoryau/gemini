@@ -93,7 +93,7 @@ PROGRAMS = $(bin_PROGRAMS)
 am_gemini_prime_d_OBJECTS = gemini_prime_d.$(OBJEXT) \
 	Filesystem.$(OBJEXT) TagExtractor.$(OBJEXT) \
 	MetadataStore.$(OBJEXT) TrackManager.$(OBJEXT) Track.$(OBJEXT) \
-	magic.$(OBJEXT)
+	Album.$(OBJEXT) Artist.$(OBJEXT) magic.$(OBJEXT)
 gemini_prime_d_OBJECTS = $(am_gemini_prime_d_OBJECTS)
 am__DEPENDENCIES_1 =
 gemini_prime_d_DEPENDENCIES = $(am__DEPENDENCIES_1) \
@@ -267,7 +267,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AM_CPPFLAGS = $(DEPS_CFLAGS) $(SQLITE_CFLAGS)
 gemini_prime_d_LDADD = $(DEPS_LIBS) $(SQLITE_LIBS)
-gemini_prime_d_SOURCES = gemini_prime_d.cpp Filesystem.cpp TagExtractor.cpp MetadataStore.cpp TrackManager.cpp Track.cpp libmagic/magic.c
+gemini_prime_d_SOURCES = gemini_prime_d.cpp Filesystem.cpp TagExtractor.cpp MetadataStore.cpp TrackManager.cpp Track.cpp Album.cpp Artist.cpp libmagic/magic.c
 all: all-am
 
 .SUFFIXES:
@@ -355,6 +355,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Album.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Artist.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Filesystem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MetadataStore.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TagExtractor.Po@am__quote@

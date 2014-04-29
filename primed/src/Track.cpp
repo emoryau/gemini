@@ -13,6 +13,17 @@ Track::Track() {
 	replayGain = -100.0f;
 }
 
+Track::Track(TagExtractor& te) {
+	filename.assign(te.getFile_uri());
+	artFilename.assign(""); // TODO: Get art somehow
+	name.assign(te.getTitle());
+	artist = NULL;
+	album = NULL;
+	replayGain = te.getTrackGain();
+	trackNumber = te.getTrackNumber();
+	discNumber = te.getDiscNumber();
+}
+
 Track::~Track() {
 	// TODO Auto-generated destructor stub
 }

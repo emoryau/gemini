@@ -10,9 +10,12 @@
  
 #include <string>
 #include "Artist.hpp"
+#include "TagExtractor.hpp"
 
 class Album {
 public:
+	Album(TagExtractor& te);
+
         bool operator< (const Album &a) const { return name < a.name; };
 
         std::string name;
