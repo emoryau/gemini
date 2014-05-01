@@ -46,9 +46,9 @@ int main( int argc, char** argv ) {
 	// TODO: Database link
 	// Create some DAO's to talk to the db
 	try {
-		store.open("/home/emoryau/test.sqlite");
-	} catch (char* e) {
-		g_error("DB opening threw:\n%s", e);
+		store.open( "/home/emoryau/test.sqlite" );
+	} catch( MetadataStoreException e ) {
+		g_error( "DB opening threw:\n%s", e.what() );
 		return 1;
 	}
 
@@ -60,6 +60,11 @@ int main( int argc, char** argv ) {
 			continue;
 
 		extractor.readTags( filename.c_str() );
+		try {
+			store.addExtractedTrack( extractor );
+		} catch( MetadataStoreException e ) {
+			g_error( "addExtractedTrack() threw:\n%s", e.what() );
+		}
 
 		// TODO: insert/update database
 	}

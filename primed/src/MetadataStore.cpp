@@ -20,7 +20,7 @@ void MetadataStore::open( const char* db_filename ) {
 		sqlite3_close( db );
 		db = NULL;
 		// Throw DB exception
-		throw "Error opening db";
+		throw new MetadataStoreException( "Error opening db" );
 	}
 
 	ensureDBSchema();
@@ -36,16 +36,99 @@ void MetadataStore::AddTrack( Track* track ) {
 	// TODO: Add track, album, artist information to the store
 }
 
-void MetadataStore::AddExtractedTrack( TagExtractor& te ) {
+void MetadataStore::addExtractedTrack( TagExtractor& te ) {
 	Track* track = new Track( te );
 	Album* album = new Album( te );
 	Artist* artist = new Artist( te );
+	
+	AddArtist( artist );
+	AddAlbum( album );
+}
+
+void MetadataStore::bindText( sqlite3_stmt* ppStmt, const char* field, const char* text ) {
+	int rc;
+	rc = sqlite3_bind_text( ppStmt,
+			sqlite3_bind_parameter_index( ppStmt, field ),
+			text,	
+			-1,
+			SQLITE_STATIC );
+	if( rc != SQLITE_OK ) {
+		throw new MetadataStoreException( sqlite3_errstr(rc) );
+	}
+}
+
+void MetadataStore::bindDouble( sqlite3_stmt* ppStmt, const char* field, const double d ) {
+	int rc;
+	rc = sqlite3_bind_double( ppStmt,
+			sqlite3_bind_parameter_index( ppStmt, field ),
+			d);
+	if( rc != SQLITE_OK ) {
+		throw new MetadataStoreException( sqlite3_errstr(rc) );
+	}
+}
+
+sqlite3_stmt* MetadataStore::prepare( const char* sql ) {
+	int rc;
+	sqlite3_stmt *ppStmt = NULL;
+
+	rc = sqlite3_prepare_v2( db, sql, -1, &ppStmt, NULL);
+	if( rc != SQLITE_OK ) {
+		throw new MetadataStoreException( sqlite3_errmsg( db ) );
+	}
+	return ppStmt;
+}
+
+void MetadataStore::finalize( sqlite3_stmt* ppStmt ) {
+	int rc;
+	rc = sqlite3_finalize( ppStmt );
+	if( rc != SQLITE_OK ) {
+		throw new MetadataStoreException( sqlite3_errmsg( db ) );
+	}
+}
+
+void MetadataStore::checkDb() {
+	if( db == NULL ) {
+		throw new MetadataStoreException( "DB not initialized" );
+	}
+}
+
+void MetadataStore::step( sqlite3_stmt* pStmt ) {
+	int rc;
+	rc = sqlite3_step( pStmt );
+	if( rc != SQLITE_DONE ) {
+		throw new MetadataStoreException( sqlite3_errmsg( db ) );
+	}
 }
 
 void MetadataStore::AddArtist( Artist* artist ) {
+	const char* sql =
+		"INSERT OR REPLACE INTO `Artists`"
+		"(`Name`)"
+		 "values(:name);";
+	sqlite3_stmt *ppStmt = NULL;
+
+	checkDb();
+
+	ppStmt = prepare( sql );
+	bindText( ppStmt, ":name", artist->name.c_str() );
+	step( ppStmt );
+	finalize( ppStmt );
 }
 
 void MetadataStore::AddAlbum( Album* album ) {
+	const char* sql =
+		"INSERT OR REPLACE INTO `Albums`"
+		"(`Name`, `ReplayGain`)"
+		"values(:name, :replay_gain);";
+	sqlite3_stmt *ppStmt = NULL;
+
+	checkDb();
+
+	ppStmt = prepare( sql );
+	bindText( ppStmt, ":name", album->name.c_str() );
+	bindDouble( ppStmt, ":replay_gain", album->replayGain );
+	step( ppStmt );
+	finalize( ppStmt );
 }
 
 void MetadataStore::ensureDBSchema() {
@@ -54,7 +137,7 @@ void MetadataStore::ensureDBSchema() {
 	std::string sql;
 
 	if( db == NULL ) {
-		throw "DB not initialized";
+		throw new MetadataStoreException( "DB not initialized" );
 	}
 
 	sql.append( "CREATE TABLE IF NOT EXISTS `Artists` (" );
@@ -86,7 +169,16 @@ void MetadataStore::ensureDBSchema() {
 
 	rc = sqlite3_exec( db, sql.c_str(), NULL, 0, &zErrMsg );
 	if( rc != SQLITE_OK ) {
-		throw zErrMsg;
+		throw new MetadataStoreException( zErrMsg );
 		sqlite3_free( zErrMsg );
 	}
 }
+
+MetadataStoreException::MetadataStoreException( const char* what ) throw() {
+	cause.assign( what );
+}
+
+const char* MetadataStoreException::what() const throw() {
+	return cause.c_str();
+}
+
