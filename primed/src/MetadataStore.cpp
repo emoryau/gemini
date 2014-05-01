@@ -100,7 +100,7 @@ void MetadataStore::step( sqlite3_stmt* pStmt ) {
 	}
 }
 
-void MetadataStore::AddArtist( Artist* artist ) {
+sqlite3_int64 MetadataStore::AddArtist( Artist* artist ) {
 	const char* sql =
 		"INSERT OR REPLACE INTO `Artists`"
 		"(`Name`)"
@@ -113,9 +113,10 @@ void MetadataStore::AddArtist( Artist* artist ) {
 	bindText( ppStmt, ":name", artist->name.c_str() );
 	step( ppStmt );
 	finalize( ppStmt );
+	return( sqlite3_last_insert_rowid( db ) );
 }
 
-void MetadataStore::AddAlbum( Album* album ) {
+sqlite3_int64 MetadataStore::AddAlbum( Album* album ) {
 	const char* sql =
 		"INSERT OR REPLACE INTO `Albums`"
 		"(`Name`, `ReplayGain`)"
@@ -129,6 +130,7 @@ void MetadataStore::AddAlbum( Album* album ) {
 	bindDouble( ppStmt, ":replay_gain", album->replayGain );
 	step( ppStmt );
 	finalize( ppStmt );
+	return( sqlite3_last_insert_rowid( db ) );
 }
 
 void MetadataStore::ensureDBSchema() {

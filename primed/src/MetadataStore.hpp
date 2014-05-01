@@ -22,8 +22,8 @@ public:
 
 	void open( const char* db_filename );
 	void AddTrack( Track* track );
-	void AddArtist( Artist* artist );
-	void AddAlbum( Album* album );
+	sqlite3_int64 AddArtist( Artist* artist );
+	sqlite3_int64 AddAlbum( Album* album );
 	void addExtractedTrack( TagExtractor& te );
 
 private:
