@@ -5,8 +5,8 @@
  *      Author: emoryau
  */
 
-#include <stdio.h>
 #include "MetadataStore.hpp"
+#include <glib.h>
 
 MetadataStore::MetadataStore() {
 	db = NULL;
@@ -32,8 +32,57 @@ MetadataStore::~MetadataStore() {
 	}
 }
 
-void MetadataStore::AddTrack( Track* track ) {
-	// TODO: Add track, album, artist information to the store
+void MetadataStore::addTrack( Track* track ) {
+	sqlite3_stmt *pStmt = NULL;
+	bool rowExists = false;
+
+	checkDb();
+
+	pStmt = prepare( "SELECT `Checksum` FROM `Tracks` WHERE `Filename` = :name;" );
+	bindText( pStmt, ":name", track->filename.c_str() );
+	if( step( pStmt ) == SQLITE_ROW ) {
+		rowExists = true;
+		//TODO: Consider checking this file's checksum
+		//checksum.assign( sqlite3_column_text( pStmt, 0 ) );
+	}
+	finalize( pStmt );
+
+	if( rowExists) {
+		pStmt = prepare(
+				"UPDATE `Tracks` SET "
+				"`Checksum` = :checksum,"
+				"`Name` = :name,"
+				"`Art_Filename` = :art_filename,"
+				"`ArtistId` = :artist_id,"
+				"`AlbumArtistId` = :album_artist_id,"
+				"`AlbumId` = :album_id,"
+				"`TrackNumber` = :track_number,"
+				"`DiscNumber` = :disc_number,"
+				"`ReplayGain` = :replay_gain "
+				"WHERE `Filename` = :filename" );
+	} else {
+		pStmt = prepare( 
+				"INSERT INTO `Tracks`"
+				"(`Filename`, `Checksum`, `Name`, `Art_Filename`, `ArtistId`, `AlbumArtistId`, `AlbumId`, `TrackNumber`,`DiscNumber`, `ReplayGain`)"
+				"values(:filename, :checksum, :name, :art_filename, :artist_id, :album_artist_id, :album_id, :track_number, :disc_number, :replay_gain);" );
+	}
+	bindText( pStmt, ":filename", track->filename.c_str() );
+	bindText( pStmt, ":checksum", "nop" );
+	bindText( pStmt, ":name", track->name.c_str() );
+	bindText( pStmt, ":art_filename", track->artFilename.c_str() );
+	if( track->artist != NULL )
+		bindLong( pStmt, ":artist_id", track->artist->id );
+	if( track->album != NULL ) {
+		bindLong( pStmt, ":album_id", track->album->id );
+		if( track->album->artist != NULL ) {
+			bindLong( pStmt, ":album_artist_id", track->album->artist->id );
+		}
+	}
+	bindLong( pStmt, ":track_number", track->trackNumber );
+	bindLong( pStmt, ":disc_number", track->discNumber );
+	bindDouble( pStmt, ":replay_gain", track->replayGain );
+	step( pStmt );
+	finalize( pStmt );
 }
 
 void MetadataStore::addExtractedTrack( TagExtractor& te ) {
@@ -41,14 +90,23 @@ void MetadataStore::addExtractedTrack( TagExtractor& te ) {
 	Album* album = new Album( te );
 	Artist* artist = new Artist( te );
 	
-	AddArtist( artist );
-	AddAlbum( album );
+	album->artist = artist;
+	track->album = album;
+	track->artist = artist;
+
+	addArtist( artist );
+	addAlbum( album );
+	addTrack( track );
+
+	delete track;
+	delete album;
+	delete artist;
 }
 
-void MetadataStore::bindText( sqlite3_stmt* ppStmt, const char* field, const char* text ) {
+void MetadataStore::bindText( sqlite3_stmt* pStmt, const char* field, const char* text ) {
 	int rc;
-	rc = sqlite3_bind_text( ppStmt,
-			sqlite3_bind_parameter_index( ppStmt, field ),
+	rc = sqlite3_bind_text( pStmt,
+			sqlite3_bind_parameter_index( pStmt, field ),
 			text,	
 			-1,
 			SQLITE_STATIC );
@@ -62,6 +120,16 @@ void MetadataStore::bindDouble( sqlite3_stmt* ppStmt, const char* field, const d
 	rc = sqlite3_bind_double( ppStmt,
 			sqlite3_bind_parameter_index( ppStmt, field ),
 			d);
+	if( rc != SQLITE_OK ) {
+		throw new MetadataStoreException( sqlite3_errstr(rc) );
+	}
+}
+
+void MetadataStore::bindLong( sqlite3_stmt* ppStmt, const char* field, const long l ) {
+	int rc;
+	rc = sqlite3_bind_int64( ppStmt,
+			sqlite3_bind_parameter_index( ppStmt, field ),
+			l);
 	if( rc != SQLITE_OK ) {
 		throw new MetadataStoreException( sqlite3_errstr(rc) );
 	}
@@ -92,45 +160,73 @@ void MetadataStore::checkDb() {
 	}
 }
 
-void MetadataStore::step( sqlite3_stmt* pStmt ) {
+int MetadataStore::step( sqlite3_stmt* pStmt ) {
 	int rc;
 	rc = sqlite3_step( pStmt );
-	if( rc != SQLITE_DONE ) {
+	if( rc != SQLITE_DONE && rc != SQLITE_ROW ) {
 		throw new MetadataStoreException( sqlite3_errmsg( db ) );
 	}
+	return rc;
 }
 
-sqlite3_int64 MetadataStore::AddArtist( Artist* artist ) {
-	const char* sql =
-		"INSERT OR REPLACE INTO `Artists`"
-		"(`Name`)"
-		 "values(:name);";
-	sqlite3_stmt *ppStmt = NULL;
+long MetadataStore::addArtist( Artist* artist ) {
+	sqlite3_stmt* pStmt = NULL;
 
+	artist->id = -1;
 	checkDb();
 
-	ppStmt = prepare( sql );
-	bindText( ppStmt, ":name", artist->name.c_str() );
-	step( ppStmt );
-	finalize( ppStmt );
-	return( sqlite3_last_insert_rowid( db ) );
+	pStmt = prepare( "SELECT `ArtistId` FROM `Artists` WHERE `Name` = :name;" );
+	bindText( pStmt, ":name", artist->name.c_str() );
+	if( step( pStmt ) == SQLITE_ROW ) {
+		artist->id = sqlite3_column_int64( pStmt, 0 );
+	}
+	finalize( pStmt );
+
+	if( artist->id < 0 ) {
+		pStmt = prepare(
+				"INSERT INTO `Artists`"
+				"(`Name`)"
+				"values(:name);");
+		bindText( pStmt, ":name", artist->name.c_str() );
+		step( pStmt );
+		finalize( pStmt );
+		artist->id = sqlite3_last_insert_rowid( db );
+	}
+
+	return( artist->id );
 }
 
-sqlite3_int64 MetadataStore::AddAlbum( Album* album ) {
-	const char* sql =
-		"INSERT OR REPLACE INTO `Albums`"
-		"(`Name`, `ReplayGain`)"
-		"values(:name, :replay_gain);";
-	sqlite3_stmt *ppStmt = NULL;
+long MetadataStore::addAlbum( Album* album ) {
+	sqlite3_stmt *pStmt = NULL;
 
+	album->id = -1;
 	checkDb();
 
-	ppStmt = prepare( sql );
-	bindText( ppStmt, ":name", album->name.c_str() );
-	bindDouble( ppStmt, ":replay_gain", album->replayGain );
-	step( ppStmt );
-	finalize( ppStmt );
-	return( sqlite3_last_insert_rowid( db ) );
+	pStmt = prepare( "SELECT `AlbumId`, `ReplayGain` FROM `Albums` WHERE `Name` = :name;" );
+	bindText( pStmt, ":name", album->name.c_str() );
+	if( step( pStmt ) == SQLITE_ROW ) {
+		album->id = sqlite3_column_int64( pStmt, 0 );
+		double replayGain = sqlite3_column_double( pStmt, 1 );
+		if( replayGain != album->replayGain && album->name.compare("") == 0 ) {
+			// TODO: Determine course of action
+			g_print( "Found album '%s', with different ReplayGain (%f, %f)\n", album->name.c_str(), album->replayGain, replayGain );
+		}
+	}
+	finalize( pStmt );
+
+	if( album->id < 0 ) {
+		pStmt = prepare(
+				"INSERT INTO `Albums`"
+				"(`Name`, `ReplayGain`)"
+				"values(:name, :replay_gain);" );
+		bindText( pStmt, ":name", album->name.c_str() );
+		bindDouble( pStmt, ":replay_gain", album->replayGain );
+		step( pStmt );
+		finalize( pStmt );
+		album->id = sqlite3_last_insert_rowid( db );
+	}
+
+	return( album->id );
 }
 
 void MetadataStore::ensureDBSchema() {
@@ -143,7 +239,7 @@ void MetadataStore::ensureDBSchema() {
 	}
 
 	sql.append( "CREATE TABLE IF NOT EXISTS `Artists` (" );
-	sql.append( "`  ArtistId` INTEGER PRIMARY KEY AUTOINCREMENT," );
+	sql.append( "`ArtistId` INTEGER PRIMARY KEY AUTOINCREMENT," );
 	sql.append( "  `Name` VARCHAR(255) UNIQUE NOT NULL" );
 	sql.append( ");" );
 
@@ -163,6 +259,7 @@ void MetadataStore::ensureDBSchema() {
 	sql.append( "  `AlbumArtistId` INTEGER DEFAULT NULL," );
 	sql.append( "  `AlbumId` INTEGER DEFAULT NULL," );
 	sql.append( "  `TrackNumber` INTEGER DEFAULT 0," );
+	sql.append( "  `DiscNumber` INTEGER DEFAULT 0," );
 	sql.append( "  `ReplayGain` FLOAT," );
 	sql.append( "  FOREIGN KEY(`ArtistId`) REFERENCES `Artists`(`ArtistId`) ON DELETE RESTRICT," );
 	sql.append( "  FOREIGN KEY(`AlbumArtistId`) REFERENCES `Artists`(`ArtistId`) ON DELETE RESTRICT," );

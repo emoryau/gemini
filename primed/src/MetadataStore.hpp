@@ -21,9 +21,9 @@ public:
 	virtual ~MetadataStore();
 
 	void open( const char* db_filename );
-	void AddTrack( Track* track );
-	sqlite3_int64 AddArtist( Artist* artist );
-	sqlite3_int64 AddAlbum( Album* album );
+	void addTrack( Track* track );
+	long addArtist( Artist* artist );
+	long addAlbum( Album* album );
 	void addExtractedTrack( TagExtractor& te );
 
 private:
@@ -32,9 +32,10 @@ private:
 	void checkDb();
 	void ensureDBSchema();
 	sqlite3_stmt* prepare( const char* sql );
+	void bindLong( sqlite3_stmt* ppStmt, const char* field, const long l );
 	void bindDouble( sqlite3_stmt* ppStmt, const char* field, const double d );
 	void bindText( sqlite3_stmt* ppStmt, const char* field, const char* text );
-	void step( sqlite3_stmt* pStmt );
+	int step( sqlite3_stmt* pStmt );
 	void finalize( sqlite3_stmt* ppStmt );
 };
 
