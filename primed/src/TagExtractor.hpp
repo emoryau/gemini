@@ -24,6 +24,7 @@ public:
 	const gchar* getFile_uri() const { return file_uri; };
 	const gchar* getArtist() const { return artist; };
 	const gchar* getAlbum() const { return album; };
+	const gchar* getAlbumArtist() const { return album_artist; };
 	const gchar* getTitle() const { return title; };
 	const guint getTrackNumber() const { return track_number; };
 	const guint getDiscNumber() const { return disc_number; };
@@ -39,6 +40,7 @@ private:
 	gchar* file_uri;
 	gchar* artist;
 	gchar* album;
+	gchar* album_artist;
 	gchar* title;
 	guint track_number;
 	guint disc_number;

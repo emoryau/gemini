@@ -13,6 +13,7 @@ TagExtractor::TagExtractor() {
 	file_uri = NULL;
 	artist = NULL;
 	album = NULL;
+	album_artist = NULL;
 	title = NULL;
 	track_number = 0;
 	disc_number = 0;
@@ -33,11 +34,14 @@ void TagExtractor::freeData() {
 		g_free( artist );
 	if( album != NULL )
 		g_free( album );
+	if( album_artist != NULL )
+		g_free( album_artist );
 	if( title != NULL )
 		g_free( title );
 	file_uri = NULL;
 	artist = NULL;
 	album = NULL;
+	album_artist = NULL;
 	title = NULL;
 	track_number = 0;
 	disc_number = 0;
@@ -83,6 +87,7 @@ void TagExtractor::readTags( const gchar* filename ) {
 		// Try to read all of the tags we care about
 		gst_tag_list_get_string( tags, GST_TAG_ARTIST, &artist );
 		gst_tag_list_get_string( tags, GST_TAG_ALBUM, &album );
+		gst_tag_list_get_string( tags, GST_TAG_ALBUM_ARTIST, &album_artist );
 		gst_tag_list_get_string( tags, GST_TAG_TITLE, &title );
 		gst_tag_list_get_uint( tags, GST_TAG_TRACK_NUMBER, &track_number );
 		gst_tag_list_get_uint( tags, GST_TAG_ALBUM_VOLUME_NUMBER, &disc_number );
@@ -115,6 +120,14 @@ void TagExtractor::readTags( const gchar* filename ) {
 			g_print( "ERROR: No Artist " );
 		if( album == NULL )
 			g_print( "ERROR: No album " );
+		if( album_artist == NULL ) {
+			if( album != NULL ) {
+				// In this case, we want to use the standard artist
+				album_artist = g_strdup( artist );
+			}
+			// TODO: Is no album & no album artist actually erroneous?
+			//g_print( "ERROR: No album artist " );
+		}
 		if( title == NULL )
 			g_print( "ERROR: No title " );
 		if( track_number == 0 )
