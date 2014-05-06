@@ -8,6 +8,9 @@
 #include "Artist.hpp"
 
 Artist::Artist(TagExtractor& te) {
-	name.assign(te.getArtist());
+	id = -1;
+	if( te.getArtist() ) {
+		name.assign(te.getArtist());
+	}
 }
 

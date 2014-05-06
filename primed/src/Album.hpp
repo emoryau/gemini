@@ -18,6 +18,7 @@ public:
 
         bool operator< (const Album &a) const { return name < a.name; };
 
+        long id;
         std::string name;
         float replayGain;
         const Artist* artist;

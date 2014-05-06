@@ -17,6 +17,7 @@ public:
 
         bool operator< (const Artist &a) const { return name < a.name; };
 
+        long id;
         std::string name;
 };
 
