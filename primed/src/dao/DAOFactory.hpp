@@ -24,5 +24,6 @@ public:
 
 };
 
+inline DAOFactory::~DAOFactory() { };
 
 #endif /* DAOFACTORY_HPP_ */

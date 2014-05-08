@@ -9,15 +9,16 @@
 #define ARTISTDAO_HPP_
 
 
-#include "../../Artist.hpp"
+#include "../Artist.hpp"
 
 class ArtistDAO {
 public:
 	virtual ~ArtistDAO() = 0;
 
-	virtual Track* GetArtistById( long id ) = 0;
-	virtual void InsertOrUpdateArtist( Artist* track ) = 0;
+	virtual Track* getArtistById( long id ) = 0;
+	virtual void insertOrUpdateArtist( Artist* track ) = 0;
 };
 
+inline ArtistDAO::~ArtistDAO() { };
 
 #endif /* ARTISTDAO_HPP_ */

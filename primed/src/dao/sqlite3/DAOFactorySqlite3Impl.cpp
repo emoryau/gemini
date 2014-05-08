@@ -6,24 +6,45 @@
  */
 
 #include "DAOFactorySqlite3Impl.hpp"
+#include "TrackDAOSqlite3Impl.hpp"
 
 DAOFactorySqlite3Impl::DAOFactorySqlite3Impl() {
-	// TODO Auto-generated constructor stub
-
+	db = NULL;
+	trackDAO = NULL;
+	artistDAO = NULL;
+	albumDAO = NULL;
 }
 
 DAOFactorySqlite3Impl::~DAOFactorySqlite3Impl() {
-	// TODO Auto-generated destructor stub
+	if( trackDAO != NULL ) {
+		delete trackDAO;
+		trackDAO = NULL;
+	}
+	if( artistDAO != NULL ) {
+		delete artistDAO;
+		artistDAO = NULL;
+	}
+	if( albumDAO != NULL ) {
+		delete albumDAO;
+		albumDAO = NULL;
+	}
+	if( db != NULL ) {
+		sqlite3_close( db );
+		db = NULL;
+	}
 }
 
 void DAOFactorySqlite3Impl::SetDBFile( const char* filename ) {
-}
+	int rc;
 
-TrackDAO* DAOFactorySqlite3Impl::GetTrackDAO() {
-}
+	rc = sqlite3_open( filename, &db );
+	if( rc != SQLITE_OK ) {
+		sqlite3_close( db );
+		db = NULL;
+		// Throw DB exception
+		throw new Sqlite3Exception( "Error opening db" );
+	}
 
-AlbumDAO* DAOFactorySqlite3Impl::GetArtistDAO() {
-}
-
-AlbumDAO* DAOFactorySqlite3Impl::GetAlbumDAO() {
+	trackDAO = new TrackDAOSqlite3Impl( db, artistDAO, albumDAO );
+	trackDAO->ensureDBSchema();
 }

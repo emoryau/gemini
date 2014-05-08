@@ -9,9 +9,11 @@
 #include "TagExtractor.hpp"
 #include "MetadataStore.hpp"
 #include "TrackManager.hpp"
+#include "dao/sqlite3/DAOFactorySqlite3Impl.hpp"
 #include <glib.h>
 
 #include <iostream>
+#include <exception>
 
 const char* extension_blacklist[] = { ".jpg", ".cue", ".db", ".m3u", ".ini", ".sfv", ".pdf", ".log", ".txt", ".png", NULL };
 
@@ -67,7 +69,18 @@ int main( int argc, char** argv ) {
 	if( argc > 1 )
 		folder = argv[1];
 
-	updateMetadataStore( folder, "/home/emoryau/test.sqlite" );
+	//updateMetadataStore( folder, "/home/emoryau/test.sqlite" );
+	try {
+		DAOFactory* daoFactory = new DAOFactorySqlite3Impl;
+		daoFactory->SetDBFile( "/home/emoryau/test.sqlite" );
+		TrackDAO* trackDAO = daoFactory->GetTrackDAO();
+		Track* track = trackDAO->getTrackById(120);
+		g_print( track->name.c_str() );
+		trackDAO->free( track );
+		delete daoFactory;
+	} catch (std::exception* e) {
+		g_error( e->what() );
+	}
 
 	g_print( "Finished\n" );
 

@@ -21,6 +21,7 @@ public:
 
 	bool operator< (const Track &t) const;
 
+	long id;
 	std::string filename;
 	std::string artFilename;
 	std::string name;

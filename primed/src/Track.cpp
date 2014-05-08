@@ -8,6 +8,7 @@
 #include "Track.hpp"
 
 Track::Track() {
+	id = -1;
 	artist = NULL;
 	album = NULL;
 	replayGain = -100.0f;
