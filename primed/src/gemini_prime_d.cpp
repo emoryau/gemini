@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <exception>
+#include <string>
 
 static const char* extension_blacklist[] = { ".jpg", ".cue", ".db", ".m3u", ".ini", ".sfv", ".pdf", ".log", ".txt", ".png", NULL };
 static const gchar* scan_filename = NULL;
