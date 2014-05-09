@@ -34,16 +34,14 @@ void updateMetadataStore( const char* directory, const char* store_filename ) {
 	TagExtractor extractor;
 	MetadataStore store;
 	TrackManager trackManager;
+	DAOFactorySqlite3Impl* daoFactory;
 
 	g_print( "Scanning %s\n", directory );
 
 	// Create some DAO's to talk to the db
-	try {
-		store.open( store_filename );
-	} catch( MetadataStoreException* e ) {
-		g_error( "DB opening threw:\n%s", e->what() );
-		return;
-	}
+	daoFactory = new DAOFactorySqlite3Impl();
+	daoFactory->setDBFile( "/home/emory.au/test.sqlite" );
+	store.setDAOFactory( daoFactory );
 
 	for( Filesystem::iterator it = directory_crawler.begin(); it != directory_crawler.end(); ++it ) {
 		// Parse file
@@ -65,17 +63,25 @@ int main( int argc, char** argv ) {
 	gst_init (&argc, &argv);
 
 	const char* folder = "/home/emoryau/testmusic"; // TODO: better default
+	const char* db = "/home/emoryau/test.sqlite";
 
 	if( argc > 1 )
 		folder = argv[1];
+	if( argc > 2 )
+		db = argv[2];
 
-	//updateMetadataStore( folder, "/home/emoryau/test.sqlite" );
+	updateMetadataStore( folder, db );
+
 	try {
-		DAOFactory* daoFactory = new DAOFactorySqlite3Impl;
-		daoFactory->SetDBFile( "/home/emoryau/test.sqlite" );
-		TrackDAO* trackDAO = daoFactory->GetTrackDAO();
+		DAOFactorySqlite3Impl* daoFactory = new DAOFactorySqlite3Impl();
+		daoFactory->setDBFile( db );
+		TrackDAO* trackDAO = daoFactory->getTrackDAO();
 		Track* track = trackDAO->getTrackById(120);
-		g_print( track->name.c_str() );
+		g_print( "%s - '%s' - %d.%d - %s\n",
+				track->artist ? track->artist->name.c_str() : "<no artist>",
+				track->album ? track->album->name.c_str() : "<no album>",
+				track->discNumber, track->trackNumber,
+				track->name.c_str() );
 		trackDAO->free( track );
 		delete daoFactory;
 	} catch (std::exception* e) {
