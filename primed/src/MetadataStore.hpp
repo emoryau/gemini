@@ -9,7 +9,6 @@
 #define METADATASTORE_HPP_
 
 #include <exception>
-#include <sqlite3.h>
 
 #include "Track.hpp"
 #include "Artist.hpp"
