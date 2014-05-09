@@ -30,5 +30,5 @@ private:
 	AlbumDAO* albumDAO;
 };
 
-inline
+
 #endif /* TRACKDAOSQLITE3IMPL_HPP_ */
