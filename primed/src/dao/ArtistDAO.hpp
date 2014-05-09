@@ -14,9 +14,11 @@
 class ArtistDAO {
 public:
 	virtual ~ArtistDAO() = 0;
+	virtual void ensureDBSchema() = 0;
 
-	virtual Track* getArtistById( long id ) = 0;
-	virtual void insertOrUpdateArtist( Artist* track ) = 0;
+	virtual void free( Artist* artist ) = 0;
+	virtual Artist* getArtistById( long id ) = 0;
+	virtual void insertOrUpdateArtist( Artist* artist ) = 0;
 };
 
 inline ArtistDAO::~ArtistDAO() { };

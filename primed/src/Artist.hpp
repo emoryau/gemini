@@ -11,14 +11,18 @@
 #include <string>
 #include "TagExtractor.hpp"
 
-class Artist { 
+class Artist {
 public:
-	Artist(TagExtractor& te);
+	Artist(): id(-1) {};
+	Artist( TagExtractor& te );
 
-        bool operator< (const Artist &a) const { return name < a.name; };
+	bool operator<( const Artist &a ) const {
+		return name < a.name;
+	}
+	;
 
-        long id;
-        std::string name;
+	long id;
+	std::string name;
 };
 
 #endif /* ARTIST_HPP_ */
