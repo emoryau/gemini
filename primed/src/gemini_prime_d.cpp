@@ -8,15 +8,22 @@
 #include "Filesystem.hpp"
 #include "TagExtractor.hpp"
 #include "MetadataStore.hpp"
-#include "TrackManager.hpp"
 #include "dao/sqlite3/DAOFactorySqlite3Impl.hpp"
 #include <glib.h>
-
+#include <stdlib.h>
 #include <iostream>
 #include <exception>
 
-const char* extension_blacklist[] = { ".jpg", ".cue", ".db", ".m3u", ".ini", ".sfv", ".pdf", ".log", ".txt", ".png", NULL };
+static const char* extension_blacklist[] = { ".jpg", ".cue", ".db", ".m3u", ".ini", ".sfv", ".pdf", ".log", ".txt", ".png", NULL };
+static const gchar* scan_filename = NULL;
+static const gchar* database_filename = "/home/emoryau/test.sqlite";
 
+static GOptionEntry entries[] =
+{
+		{ "scan", 's', 0, G_OPTION_ARG_FILENAME, &scan_filename, "Scan directory M for music, then exit", "M" },
+		{ "database", 'd', 0, G_OPTION_ARG_FILENAME, &database_filename, "Set name of database to D", "D" },
+		{ NULL }
+};
 
 bool isInBlacklist( const std::string& subject ) {
 	const char** extension_comparator = extension_blacklist;
@@ -33,7 +40,6 @@ void updateMetadataStore( const char* directory, const char* store_filename ) {
 	Filesystem directory_crawler( directory );
 	TagExtractor extractor;
 	MetadataStore store;
-	TrackManager trackManager;
 	DAOFactorySqlite3Impl* daoFactory;
 
 	g_print( "Scanning %s\n", directory );
@@ -43,7 +49,7 @@ void updateMetadataStore( const char* directory, const char* store_filename ) {
 	daoFactory->setDBFile( "/home/emory.au/test.sqlite" );
 	store.setDAOFactory( daoFactory );
 
-	for( Filesystem::iterator it = directory_crawler.begin(); it != directory_crawler.end(); ++it ) {
+	for (Filesystem::iterator it = directory_crawler.begin(); it != directory_crawler.end(); ++it) {
 		// Parse file
 		std::string filename = *it;
 
@@ -59,32 +65,40 @@ void updateMetadataStore( const char* directory, const char* store_filename ) {
 	}
 }
 
+void parseCommandLine( int argc, char** argv ) {
+	GOptionContext* context;
+	GError* error = NULL;
+
+	context = g_option_context_new( "- music playback daemon" );
+	g_option_context_add_main_entries( context, entries, "" );
+	if( !g_option_context_parse( context, &argc, &argv, &error ) ) {
+		g_print( "option parsing failed: %s\n", error->message );
+		exit( 1 );
+	}
+}
+
 int main( int argc, char** argv ) {
-	gst_init (&argc, &argv);
+	gst_init( &argc, &argv );
 
-	const char* folder = "/home/emoryau/testmusic"; // TODO: better default
-	const char* db = "/home/emoryau/test.sqlite";
+	parseCommandLine( argc, argv );
 
-	if( argc > 1 )
-		folder = argv[1];
-	if( argc > 2 )
-		db = argv[2];
+	g_print( "Database filename: %s\n", database_filename );
 
-	updateMetadataStore( folder, db );
+	if( scan_filename != NULL ) {
+		updateMetadataStore( scan_filename, database_filename );
+		exit(0);
+	}
 
 	try {
 		DAOFactorySqlite3Impl* daoFactory = new DAOFactorySqlite3Impl();
-		daoFactory->setDBFile( db );
+		daoFactory->setDBFile( database_filename );
 		TrackDAO* trackDAO = daoFactory->getTrackDAO();
-		Track* track = trackDAO->getTrackById(120);
-		g_print( "%s - '%s' - %d.%d - %s\n",
-				track->artist ? track->artist->name.c_str() : "<no artist>",
-				track->album ? track->album->name.c_str() : "<no album>",
-				track->discNumber, track->trackNumber,
-				track->name.c_str() );
+		Track* track = trackDAO->getTrackById( 120 );
+		g_print( "%s - '%s' - %d.%d - %s\n", track->artist ? track->artist->name.c_str() : "<no artist>",
+				track->album ? track->album->name.c_str() : "<no album>", track->discNumber, track->trackNumber, track->name.c_str() );
 		trackDAO->free( track );
 		delete daoFactory;
-	} catch (std::exception* e) {
+	} catch( std::exception* e ) {
 		g_error( e->what() );
 	}
 
@@ -93,7 +107,8 @@ int main( int argc, char** argv ) {
 	return 0;
 }
 
-void printExtractorContents( const TagExtractor& extractor) {
+void printExtractorContents( const TagExtractor& extractor ) {
 	std::cout << extractor.getArtist() << "\t" << extractor.getAlbum() << "\t" << extractor.getTitle() << "\n";
-	std::cout << extractor.getDiscNumber() << "\t" << extractor.getTrackNumber() << "\t" << extractor.getAlbumGain() << "\t" << extractor.getTrackGain() << "\n";
+	std::cout << extractor.getDiscNumber() << "\t" << extractor.getTrackNumber() << "\t" << extractor.getAlbumGain() << "\t"
+			<< extractor.getTrackGain() << "\n";
 }
