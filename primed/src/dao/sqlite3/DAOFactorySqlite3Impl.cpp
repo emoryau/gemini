@@ -6,6 +6,8 @@
  */
 
 #include "DAOFactorySqlite3Impl.hpp"
+#include "ArtistDAOSqlite3Impl.hpp"
+#include "AlbumDAOSqlite3Impl.hpp"
 #include "TrackDAOSqlite3Impl.hpp"
 
 DAOFactorySqlite3Impl::DAOFactorySqlite3Impl(void) {
@@ -45,6 +47,10 @@ void DAOFactorySqlite3Impl::setDBFile( const char* filename ) {
 		throw new Sqlite3Exception( "Error opening db" );
 	}
 
+	artistDAO = new ArtistDAOSqlite3Impl( db );
+	artistDAO->ensureDBSchema();
+	albumDAO = new AlbumDAOSqlite3Impl( db, artistDAO );
+	albumDAO->ensureDBSchema();
 	trackDAO = new TrackDAOSqlite3Impl( db, artistDAO, albumDAO );
 	trackDAO->ensureDBSchema();
 }
