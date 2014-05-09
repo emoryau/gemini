@@ -14,29 +14,19 @@
 #include "Track.hpp"
 #include "Artist.hpp"
 #include "Album.hpp"
+#include "dao/DAOFactory.hpp"
 
 class MetadataStore {
 public:
-	MetadataStore();
+	MetadataStore(): daoFactory( NULL ) { };
+	MetadataStore( DAOFactory* daoFactory );
 	virtual ~MetadataStore();
 
-	void open( const char* db_filename );
-	void addTrack( Track* track );
-	long addArtist( Artist* artist );
-	long addAlbum( Album* album );
+	void setDAOFactory( DAOFactory* daoFactory) { this->daoFactory = daoFactory; };
 	void addExtractedTrack( TagExtractor& te );
 
 private:
-	sqlite3* db;
-
-	void checkDb();
-	void ensureDBSchema();
-	sqlite3_stmt* prepare( const char* sql );
-	void bindLong( sqlite3_stmt* ppStmt, const char* field, const long l );
-	void bindDouble( sqlite3_stmt* ppStmt, const char* field, const double d );
-	void bindText( sqlite3_stmt* ppStmt, const char* field, const char* text );
-	int step( sqlite3_stmt* pStmt );
-	void finalize( sqlite3_stmt* ppStmt );
+	DAOFactory* daoFactory;
 };
 
 class MetadataStoreException: public std::exception {
