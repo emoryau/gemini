@@ -17,10 +17,10 @@ class DAOFactory {
 public:
 	virtual ~DAOFactory() = 0;
 
-	virtual void SetDBFile( const char* filename ) = 0;
-	virtual TrackDAO* GetTrackDAO() = 0;
-	virtual AlbumDAO* GetArtistDAO() = 0;
-	virtual AlbumDAO* GetAlbumDAO() = 0;
+	virtual void setDBFile( const char* filename ) = 0;
+	virtual TrackDAO* getTrackDAO() = 0;
+	virtual ArtistDAO* getArtistDAO() = 0;
+	virtual AlbumDAO* getAlbumDAO() = 0;
 
 };
 

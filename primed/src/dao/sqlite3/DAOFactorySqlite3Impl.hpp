@@ -10,6 +10,8 @@
 
 #include "../DAOFactory.hpp"
 #include "../TrackDAO.hpp"
+#include "../ArtistDAO.hpp"
+#include "../AlbumDAO.hpp"
 #include <sqlite3.h>
 
 class DAOFactorySqlite3Impl: public DAOFactory {
@@ -17,10 +19,10 @@ public:
 	DAOFactorySqlite3Impl();
 	virtual ~DAOFactorySqlite3Impl();
 
-	void SetDBFile( const char* filename );
-	TrackDAO* GetTrackDAO() { return trackDAO; };
-	AlbumDAO* GetArtistDAO() { return NULL; };
-	AlbumDAO* GetAlbumDAO() { return NULL; };
+	void setDBFile( const char* filename );
+	TrackDAO* getTrackDAO() { return trackDAO; };
+	ArtistDAO* getArtistDAO() { return artistDAO; };
+	AlbumDAO* getAlbumDAO() { return albumDAO; };
 
 private:
 	sqlite3* db;

@@ -8,7 +8,7 @@
 #include "DAOFactorySqlite3Impl.hpp"
 #include "TrackDAOSqlite3Impl.hpp"
 
-DAOFactorySqlite3Impl::DAOFactorySqlite3Impl() {
+DAOFactorySqlite3Impl::DAOFactorySqlite3Impl(void) {
 	db = NULL;
 	trackDAO = NULL;
 	artistDAO = NULL;
@@ -34,7 +34,7 @@ DAOFactorySqlite3Impl::~DAOFactorySqlite3Impl() {
 	}
 }
 
-void DAOFactorySqlite3Impl::SetDBFile( const char* filename ) {
+void DAOFactorySqlite3Impl::setDBFile( const char* filename ) {
 	int rc;
 
 	rc = sqlite3_open( filename, &db );
