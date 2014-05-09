@@ -41,7 +41,7 @@ Artist* ArtistDAOSqlite3Impl::getArtistById( long id ) {
 	checkDb();
 
 	sqlite3_stmt* pStmt = prepare( "SELECT "
-			"`Name`, "
+			"`Name`"
 			" FROM `Artists` WHERE `ArtistId` = :artistid" );
 	bindLong( pStmt, ":artistid", id );
 	if( step( pStmt ) != SQLITE_ROW ) {
@@ -51,6 +51,8 @@ Artist* ArtistDAOSqlite3Impl::getArtistById( long id ) {
 	artist = new Artist();
 	artist->id = id;
 	artist->name.assign( (const char*) sqlite3_column_text( pStmt, column++ ) );
+
+	finalize( pStmt );
 
 	return artist;
 }

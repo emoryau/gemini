@@ -9,7 +9,7 @@
 #define ARTISTDAOSQLITE3IMPL_HPP_
 
 #include "BaseSqlite3Impl.hpp"
-#include <sqlite3.h>
+#include "../ArtistDAO.hpp"
 
 class ArtistDAOSqlite3Impl: public ArtistDAO, public BaseSqlite3Impl {
 public:

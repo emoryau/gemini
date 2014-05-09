@@ -9,7 +9,8 @@
 #define ALBUMDAOSQLITE3IMPL_HPP_
 
 #include "BaseSqlite3Impl.hpp"
-#include "AlbumDAO.hpp"
+#include "../ArtistDAO.hpp"
+#include "../AlbumDAO.hpp"
 
 class AlbumDAOSqlite3Impl: public AlbumDAO, public BaseSqlite3Impl {
 public:

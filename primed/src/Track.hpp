@@ -28,8 +28,8 @@ public:
 	unsigned int trackNumber;
 	unsigned int discNumber;
 	double replayGain;
-	const Artist* artist;
-	const Album* album;
+	Artist* artist;
+	Album* album;
 };
 
 #endif /* TRACK_HPP_ */
