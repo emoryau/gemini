@@ -7,7 +7,7 @@
 
 #include "AlbumDAOSqlite3Impl.hpp"
 #include <glib.h>
-#include <sstream>
+#include <string>
 
 AlbumDAOSqlite3Impl::AlbumDAOSqlite3Impl( sqlite3* db, ArtistDAO* artistDAO ) {
 	this->db = db;
