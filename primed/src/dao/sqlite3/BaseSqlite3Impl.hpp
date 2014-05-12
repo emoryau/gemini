@@ -10,6 +10,7 @@
 
 #include <string>
 #include <sqlite3.h>
+#include <list>
 
 class BaseSqlite3Impl {
 protected:
@@ -23,6 +24,20 @@ protected:
 	void finalize( sqlite3_stmt* ppStmt );
 
 	sqlite3* db;
+
+	struct QueryCriteria {
+		const char* field_name;
+		const char* bind_var;
+		enum {
+			TEXT,
+			LONG,
+			DOUBLE
+		} field_type;
+		const void* value;
+	};
+	typedef std::list<QueryCriteria> QueryCriteriaList;
+	std::string* buildSqlFromQueryCriteria( const char* table_name, QueryCriteriaList& queryCriteriaList );
+	void bindVariablesFromQueryCriteria( sqlite3_stmt* pStmt, QueryCriteriaList& queryCriteriaList );
 };
 
 

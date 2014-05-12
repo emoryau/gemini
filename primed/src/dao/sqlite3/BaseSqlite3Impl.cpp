@@ -6,6 +6,7 @@
  */
 
 #include "BaseSqlite3Impl.hpp"
+#include <sstream>
 
 
 void BaseSqlite3Impl::checkDb() {
@@ -70,5 +71,43 @@ void BaseSqlite3Impl::finalize( sqlite3_stmt* ppStmt ) {
 	rc = sqlite3_finalize( ppStmt );
 	if( rc != SQLITE_OK ) {
 		throw new Sqlite3Exception( sqlite3_errmsg( db ) );
+	}
+}
+
+
+std::string* BaseSqlite3Impl::buildSqlFromQueryCriteria( const char* table_name, QueryCriteriaList& queryCriteriaList ) {
+	std::stringstream sql;
+	bool included_where = false;
+
+	sql << "SELECT * FROM `" << table_name << "`";
+	for( QueryCriteriaList::iterator qc_iter = queryCriteriaList.begin(); qc_iter != queryCriteriaList.end(); qc_iter++ ) {
+		QueryCriteria& qc = *qc_iter;
+		if( included_where ) {
+			sql << " AND ";
+		} else {
+			sql << " WHERE ";
+			included_where = true;
+		}
+		sql << "`" << qc.field_name << "` = " << qc.bind_var;
+	}
+	sql << ';';
+
+	return new std::string( sql.str() );
+}
+
+void BaseSqlite3Impl::bindVariablesFromQueryCriteria( sqlite3_stmt* pStmt, QueryCriteriaList& queryCriteriaList ) {
+	for( QueryCriteriaList::iterator qc_iter = queryCriteriaList.begin(); qc_iter != queryCriteriaList.end(); qc_iter++ ) {
+		QueryCriteria& qc = *qc_iter;
+		switch( qc.field_type ) {
+			case QueryCriteria::TEXT:
+				bindText( pStmt, qc.bind_var, (const char*)qc.value );
+				break;
+			case QueryCriteria::LONG:
+				bindLong( pStmt, qc.bind_var, *(const long*)qc.value );
+				break;
+			case QueryCriteria::DOUBLE:
+				bindDouble( pStmt, qc.bind_var, *(const double*)qc.value );
+				break;
+		}
 	}
 }

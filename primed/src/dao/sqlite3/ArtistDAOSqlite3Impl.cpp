@@ -6,7 +6,7 @@
  */
 
 #include "ArtistDAOSqlite3Impl.hpp"
-#include <sstream>
+#include <string>
 #include <glib.h>
 
 ArtistDAOSqlite3Impl::ArtistDAOSqlite3Impl( sqlite3* db ) {
@@ -43,36 +43,28 @@ void ArtistDAOSqlite3Impl::free( Artist* artist ) {
 Artist* ArtistDAOSqlite3Impl::getArtist( Artist* criterion ) {
 	Artist* artist;
 	int column = 0;
-	std::stringstream sql;
-	bool included_where = false;
+	QueryCriteriaList queryCriteriaList;
+	std::string* sql;
 
 	checkDb();
 
-	sql << "SELECT * FROM `Artists`";
 	if( criterion != NULL ) {
 		if( criterion->id >= 0 ) {
-			sql << (included_where ? "" : " WHERE ");
-			sql << "`ArtistId` = :artistid ";
-			included_where = true;
+			QueryCriteria qc = {"ArtistId", ":artistid", QueryCriteria::LONG, &criterion->id};
+			qc.value = &criterion->id;
+			queryCriteriaList.push_back(qc);
 		}
 		if( !criterion->name.empty() ) {
-			sql << (included_where ? " AND " : " WHERE ");
-			sql << "`Name` = :name";
-			included_where = true;
+			QueryCriteria qc = {"Name", ":name", QueryCriteria::TEXT};
+			qc.value = criterion->name.c_str();
+			queryCriteriaList.push_back(qc);
 		}
 	}
-	sql << ';';
 
-	sqlite3_stmt* pStmt = prepare( sql.str().c_str() );
+	sql = buildSqlFromQueryCriteria( "Artists", queryCriteriaList );
+	sqlite3_stmt* pStmt = prepare( sql->c_str() );
+	bindVariablesFromQueryCriteria( pStmt, queryCriteriaList );
 
-	if( criterion != NULL ) {
-		if( criterion->id >= 0 ) {
-			bindLong( pStmt, ":artistid", criterion->id );
-		}
-		if( !criterion->name.empty() ) {
-			bindText( pStmt, ":name", criterion->name.c_str() );
-		}
-	}
 	if( step( pStmt ) != SQLITE_ROW ) {
 		return NULL;
 	}
@@ -82,6 +74,7 @@ Artist* ArtistDAOSqlite3Impl::getArtist( Artist* criterion ) {
 	artist->name.assign( (const char*) sqlite3_column_text( pStmt, column++ ) );
 
 	finalize( pStmt );
+	delete sql;
 
 	return artist;
 }

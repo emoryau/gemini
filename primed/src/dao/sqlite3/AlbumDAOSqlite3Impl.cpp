@@ -49,44 +49,32 @@ void AlbumDAOSqlite3Impl::free( Album* album ) {
 Album* AlbumDAOSqlite3Impl::getAlbum( Album* criterion ) {
 	Album* album;
 	int column = 0;
-	std::stringstream sql;
-	bool included_where = false;
+	QueryCriteriaList queryCriteriaList;
+	std::string* sql;
 
 	checkDb();
 
-	sql << "SELECT * FROM `Albums`";
 	if( criterion != NULL ) {
 		if( criterion->id >= 0 ) {
-			sql << (included_where ? " AND " : " WHERE ");
-			sql << "`AlbumId` = :albumid";
-			included_where = true;
+			QueryCriteria qc = {"AlbumId", ":albumid", QueryCriteria::LONG};
+			qc.value = &criterion->id;
+			queryCriteriaList.push_back(qc);
 		}
 		if( !criterion->name.empty() ) {
-			sql << (included_where ? " AND " : " WHERE ");
-			sql << "`Name` = :name";
-			included_where = true;
+			QueryCriteria qc = {"Name", ":name", QueryCriteria::TEXT};
+			qc.value = criterion->name.c_str();
+			queryCriteriaList.push_back(qc);
 		}
 		if( criterion->replayGain > -99.0 ) {
-			sql << (included_where ? " AND " : " WHERE ");
-			sql << "`ReplayGain` = :replaygain";
-			included_where = true;
+			QueryCriteria qc = {"ReplayGain", ":replaygain", QueryCriteria::DOUBLE};
+			qc.value = &criterion->replayGain;
+			queryCriteriaList.push_back(qc);
 		}
 	}
-	sql << ';';
 
-	sqlite3_stmt* pStmt = prepare( sql.str().c_str() );
-
-	if( criterion != NULL ) {
-		if( criterion->id >= 0 ) {
-			bindLong( pStmt, ":albumid", criterion->id );
-		}
-		if( !criterion->name.empty() ) {
-			bindText( pStmt, ":name", criterion->name.c_str() );
-		}
-		if( criterion->replayGain > -99.0 ) {
-			bindDouble( pStmt, ":replaygain", criterion->replayGain );
-		}
-	}
+	sql = buildSqlFromQueryCriteria( "Albums", queryCriteriaList );
+	sqlite3_stmt* pStmt = prepare( sql->c_str() );
+	bindVariablesFromQueryCriteria( pStmt, queryCriteriaList );
 
 	if( step( pStmt ) != SQLITE_ROW ) {
 		return NULL;
@@ -98,6 +86,7 @@ Album* AlbumDAOSqlite3Impl::getAlbum( Album* criterion ) {
 	album->replayGain = sqlite3_column_double( pStmt, column++ );
 
 	finalize( pStmt );
+	delete sql;
 
 	return album;
 }
