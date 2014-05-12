@@ -31,9 +31,11 @@ static GOptionEntry command_line_entries[] =
 		{ NULL }
 };
 
-void actionScan( void );
+static void actionScan( void );
 void actionPlaylist(void);
 void actionDbTest(void);
+
+void printTrack( const Track* track );
 
 struct ActionRow {
 	const gchar* command_text;
@@ -89,6 +91,51 @@ void actionScan( void ) {
 }
 
 void actionPlaylist(void) {
+	DAOFactorySqlite3Impl* daoFactory = new DAOFactorySqlite3Impl();
+	daoFactory->setDBFile( database_filename );
+	TrackDAO* trackDAO = daoFactory->getTrackDAO();
+	ArtistDAO* artistDAO = daoFactory->getArtistDAO();
+	AlbumDAO* albumDAO = daoFactory->getAlbumDAO();
+
+	{
+		Playlist* all_tracks = trackDAO->getTrackIds();
+		for( Playlist::iterator iter_playlist = all_tracks->begin(); iter_playlist != all_tracks->end(); iter_playlist++) {
+			g_print( "%d\t", (*iter_playlist) );
+		}
+		g_print( "\n" );
+		trackDAO->free( all_tracks );
+		all_tracks = NULL;
+	}
+
+	{
+		Artist* artist = artistDAO->getArtistById( 51 );
+		g_print( "Artist test - %s\n", artist->name.c_str() );
+		Playlist* artist_tracks = trackDAO->getTrackIdsByArtist( artist->id );
+		for( Playlist::iterator iter_playlist = artist_tracks->begin(); iter_playlist != artist_tracks->end(); iter_playlist++) {
+			long trackId = *iter_playlist;
+			Track* track = trackDAO->getTrackById( trackId );
+			printTrack( track );
+			trackDAO->free( track );
+		}
+		trackDAO->free( artist_tracks );
+		artist_tracks = NULL;
+	}
+
+	{
+		Album* album = albumDAO->getAlbumById( 59 );
+		g_print( "Album test - %s\n", album->name.c_str() );
+		Playlist* album_tracks = trackDAO->getTrackIdsByAlbum( album->id );
+		for( Playlist::iterator iter_playlist = album_tracks->begin(); iter_playlist != album_tracks->end(); iter_playlist++) {
+			long trackId = *iter_playlist;
+			Track* track = trackDAO->getTrackById( trackId );
+			printTrack( track );
+			trackDAO->free( track );
+		}
+		trackDAO->free( album_tracks );
+		album_tracks = NULL;
+	}
+
+	delete daoFactory;
 }
 
 void actionDbTest(void) {
@@ -178,6 +225,10 @@ int main( int argc, char** argv ) {
 	return 0;
 }
 
+void printTrack( const Track* track ) {
+	g_print( "%s - '%s' - %d.%d - %s\n", track->artist ? track->artist->name.c_str() : "<no artist>",
+			track->album ? track->album->name.c_str() : "<no album>", track->discNumber, track->trackNumber, track->name.c_str() );
+}
 void printExtractorContents( const TagExtractor& extractor ) {
 	std::cout << extractor.getArtist() << "\t" << extractor.getAlbum() << "\t" << extractor.getTitle() << "\n";
 	std::cout << extractor.getDiscNumber() << "\t" << extractor.getTrackNumber() << "\t" << extractor.getAlbumGain() << "\t"
