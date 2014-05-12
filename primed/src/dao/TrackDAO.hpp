@@ -9,7 +9,8 @@
 #define TRACKDAO_HPP_
 
 #include "../Track.hpp"
-#include <vector>
+#include "../Playlist.hpp"
+
 
 class TrackDAO {
 public:
@@ -17,8 +18,11 @@ public:
 	virtual void ensureDBSchema() = 0;
 
 	virtual void free( Track* track ) = 0;
+	virtual void free( Playlist* playlist ) = 0;
 	virtual Track* getTrackById( long id ) = 0;
-	virtual std::vector<long>& getTrackIdsByArtist( long artist_id ) = 0;
+	virtual Playlist* getTrackIds( ) = 0;
+	virtual Playlist* getTrackIdsByArtist( long artist_id ) = 0;
+	virtual Playlist* getTrackIdsByAlbum( long album_id ) = 0;
 	virtual void insertOrUpdateTrack( Track* track ) = 0;
 };
 

@@ -151,3 +151,68 @@ void TrackDAOSqlite3Impl::ensureDBSchema() {
 		sqlite3_free( zErrMsg );
 	}
 }
+
+void TrackDAOSqlite3Impl::free( Playlist* playlist ) {
+	delete playlist;
+}
+
+Playlist* TrackDAOSqlite3Impl::getTrackIds( ) {
+	Playlist* playlist;
+
+	checkDb();
+
+	playlist = new Playlist();
+
+	sqlite3_stmt* pStmt = prepare( "SELECT "
+			"`TrackId` "
+			" FROM `Tracks`;" );
+	while( step( pStmt ) == SQLITE_ROW ) {
+		playlist->push_back( sqlite3_column_int64( pStmt, 0) );
+	}
+
+	finalize( pStmt );
+
+	return playlist;
+}
+
+Playlist* TrackDAOSqlite3Impl::getTrackIdsByArtist( long artist_id ) {
+	Playlist* playlist;
+
+	checkDb();
+
+	playlist = new Playlist();
+
+	sqlite3_stmt* pStmt = prepare( "SELECT "
+			"`TrackId` "
+			" FROM `Tracks`"
+			" WHERE `ArtistId` = :artistid;");
+	bindLong( pStmt, ":artistid", artist_id );
+	while( step( pStmt ) == SQLITE_ROW ) {
+		playlist->push_back( sqlite3_column_int64( pStmt, 0) );
+	}
+
+	finalize( pStmt );
+
+	return playlist;
+}
+
+Playlist* TrackDAOSqlite3Impl::getTrackIdsByAlbum( long album_id ) {
+	Playlist* playlist;
+
+	checkDb();
+
+	playlist = new Playlist();
+
+	sqlite3_stmt* pStmt = prepare( "SELECT "
+			"`TrackId` "
+			" FROM `Tracks`"
+			" WHERE `AlbumId` = :albumid;");
+	bindLong( pStmt, ":albumid", album_id );
+	while( step( pStmt ) == SQLITE_ROW ) {
+		playlist->push_back( sqlite3_column_int64( pStmt, 0) );
+	}
+
+	finalize( pStmt );
+
+	return playlist;
+}

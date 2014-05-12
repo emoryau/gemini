@@ -9,5 +9,6 @@ gemini_prime_d_SOURCES= \
 	Track.cpp Track.hpp \
 	Album.cpp Album.hpp \
 	Artist.cpp Artist.hpp \
+	Playlist.hpp \
 	GeminiException.cpp \
 	gemini_prime_d.cpp
