@@ -19,7 +19,7 @@ public:
 	virtual void ensureDBSchema();
 
 	virtual void free( Album* album );
-	virtual Album* getAlbumById( long id );
+	virtual Album* getAlbum( Album* criterion );
 	virtual void insertOrUpdateAlbum( Album* album );
 
 private:

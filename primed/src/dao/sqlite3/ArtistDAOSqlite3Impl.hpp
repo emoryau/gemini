@@ -18,7 +18,7 @@ public:
 	virtual void ensureDBSchema();
 
 	virtual void free( Artist* track );
-	virtual Artist* getArtistById( long id );
+	virtual Artist* getArtist( Artist* criterion );
 	virtual void insertOrUpdateArtist( Artist* track );
 };
 

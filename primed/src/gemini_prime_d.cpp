@@ -107,8 +107,10 @@ void actionPlaylist(void) {
 		all_tracks = NULL;
 	}
 
-	{
-		Artist* artist = artistDAO->getArtistById( 51 );
+	try {
+		Artist criterion;
+		criterion.name.assign( "Adele" );
+		Artist* artist = artistDAO->getArtist( &criterion );
 		g_print( "Artist test - %s\n", artist->name.c_str() );
 		Playlist* artist_tracks = trackDAO->getTrackIdsByArtist( artist->id );
 		for( Playlist::iterator iter_playlist = artist_tracks->begin(); iter_playlist != artist_tracks->end(); iter_playlist++) {
@@ -119,10 +121,14 @@ void actionPlaylist(void) {
 		}
 		trackDAO->free( artist_tracks );
 		artist_tracks = NULL;
+	} catch (std::exception* ex ) {
+		g_error( ex->what() );
 	}
 
 	{
-		Album* album = albumDAO->getAlbumById( 59 );
+		Album criterion;
+		criterion.name.assign( "21" );
+		Album* album = albumDAO->getAlbum( &criterion );
 		g_print( "Album test - %s\n", album->name.c_str() );
 		Playlist* album_tracks = trackDAO->getTrackIdsByAlbum( album->id );
 		for( Playlist::iterator iter_playlist = album_tracks->begin(); iter_playlist != album_tracks->end(); iter_playlist++) {

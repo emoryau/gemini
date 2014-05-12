@@ -19,6 +19,8 @@ TrackDAOSqlite3Impl::~TrackDAOSqlite3Impl() {
 
 Track* TrackDAOSqlite3Impl::getTrackById( long id ) {
 	Track* track;
+	Artist* artist_criterion;
+	Album* album_criterion;
 	int column = 0;
 
 	checkDb();
@@ -40,18 +42,31 @@ Track* TrackDAOSqlite3Impl::getTrackById( long id ) {
 	}
 
 	track = new Track();
+	artist_criterion = new Artist();
+	album_criterion = new Album();
+
 	track->id = id;
 	track->filename.assign( (const char*) sqlite3_column_text( pStmt, column++ ) );
 	column++; //track->checksum.assign( (const char*)sqlite3_column_text( pStmt, column++;  ) );
 	track->name.assign( (const char*) sqlite3_column_text( pStmt, column++ ) );
 	track->artFilename.assign( (const char*) sqlite3_column_text( pStmt, column++ ) );
-	track->artist = artistDAO->getArtistById( sqlite3_column_int64( pStmt, column++ ) );
-	track->album = albumDAO->getAlbumById( sqlite3_column_int64( pStmt, column++ ) );
+	artist_criterion->id = sqlite3_column_int64( pStmt, column++ );
+	album_criterion->id = sqlite3_column_int64( pStmt, column++ );
 	track->trackNumber = sqlite3_column_int( pStmt, column++ );
 	track->discNumber = sqlite3_column_int( pStmt, column++ );
 	track->replayGain = sqlite3_column_double( pStmt, column++ );
 
+	if( artist_criterion->id >= 0 ) {
+		track->artist = artistDAO->getArtist( artist_criterion );
+	}
+	if( album_criterion->id >= 0 ) {
+		track->album = albumDAO->getAlbum( album_criterion );
+	}
+
 	finalize( pStmt );
+
+	delete album_criterion;
+	delete artist_criterion;
 
 	return track;
 }

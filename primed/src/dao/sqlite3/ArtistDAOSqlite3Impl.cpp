@@ -6,6 +6,8 @@
  */
 
 #include "ArtistDAOSqlite3Impl.hpp"
+#include <sstream>
+#include <glib.h>
 
 ArtistDAOSqlite3Impl::ArtistDAOSqlite3Impl( sqlite3* db ) {
 	this->db = db;
@@ -34,31 +36,54 @@ void ArtistDAOSqlite3Impl::ensureDBSchema() {
 	}
 }
 
-Artist* ArtistDAOSqlite3Impl::getArtistById( long id ) {
+void ArtistDAOSqlite3Impl::free( Artist* artist ) {
+	delete artist;
+}
+
+Artist* ArtistDAOSqlite3Impl::getArtist( Artist* criterion ) {
 	Artist* artist;
 	int column = 0;
+	std::stringstream sql;
+	bool included_where = false;
 
 	checkDb();
 
-	sqlite3_stmt* pStmt = prepare( "SELECT "
-			"`Name`"
-			" FROM `Artists` WHERE `ArtistId` = :artistid" );
-	bindLong( pStmt, ":artistid", id );
+	sql << "SELECT * FROM `Artists`";
+	if( criterion != NULL ) {
+		if( criterion->id >= 0 ) {
+			sql << (included_where ? "" : " WHERE ");
+			sql << "`ArtistId` = :artistid ";
+			included_where = true;
+		}
+		if( !criterion->name.empty() ) {
+			sql << (included_where ? " AND " : " WHERE ");
+			sql << "`Name` = :name";
+			included_where = true;
+		}
+	}
+	sql << ';';
+
+	sqlite3_stmt* pStmt = prepare( sql.str().c_str() );
+
+	if( criterion != NULL ) {
+		if( criterion->id >= 0 ) {
+			bindLong( pStmt, ":artistid", criterion->id );
+		}
+		if( !criterion->name.empty() ) {
+			bindText( pStmt, ":name", criterion->name.c_str() );
+		}
+	}
 	if( step( pStmt ) != SQLITE_ROW ) {
 		return NULL;
 	}
 
 	artist = new Artist();
-	artist->id = id;
+	artist->id = sqlite3_column_int64( pStmt, column++ );
 	artist->name.assign( (const char*) sqlite3_column_text( pStmt, column++ ) );
 
 	finalize( pStmt );
 
 	return artist;
-}
-
-void ArtistDAOSqlite3Impl::free( Artist* artist ) {
-	delete artist;
 }
 
 void ArtistDAOSqlite3Impl::insertOrUpdateArtist( Artist* artist ) {

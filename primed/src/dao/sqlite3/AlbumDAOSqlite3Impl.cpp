@@ -6,6 +6,8 @@
  */
 
 #include "AlbumDAOSqlite3Impl.hpp"
+#include <glib.h>
+#include <sstream>
 
 AlbumDAOSqlite3Impl::AlbumDAOSqlite3Impl( sqlite3* db, ArtistDAO* artistDAO ) {
 	this->db = db;
@@ -44,23 +46,54 @@ void AlbumDAOSqlite3Impl::free( Album* album ) {
 	delete album;
 }
 
-Album* AlbumDAOSqlite3Impl::getAlbumById( long id ) {
+Album* AlbumDAOSqlite3Impl::getAlbum( Album* criterion ) {
 	Album* album;
 	int column = 0;
+	std::stringstream sql;
+	bool included_where = false;
 
 	checkDb();
 
-	sqlite3_stmt* pStmt = prepare( "SELECT "
-			"`Name`, "
-			"`ReplayGain`"
-			" FROM `Albums` WHERE `AlbumId` = :albumid" );
-	bindLong( pStmt, ":albumid", id );
+	sql << "SELECT * FROM `Albums`";
+	if( criterion != NULL ) {
+		if( criterion->id >= 0 ) {
+			sql << (included_where ? " AND " : " WHERE ");
+			sql << "`AlbumId` = :albumid";
+			included_where = true;
+		}
+		if( !criterion->name.empty() ) {
+			sql << (included_where ? " AND " : " WHERE ");
+			sql << "`Name` = :name";
+			included_where = true;
+		}
+		if( criterion->replayGain > -99.0 ) {
+			sql << (included_where ? " AND " : " WHERE ");
+			sql << "`ReplayGain` = :replaygain";
+			included_where = true;
+		}
+	}
+	sql << ';';
+
+	sqlite3_stmt* pStmt = prepare( sql.str().c_str() );
+
+	if( criterion != NULL ) {
+		if( criterion->id >= 0 ) {
+			bindLong( pStmt, ":albumid", criterion->id );
+		}
+		if( !criterion->name.empty() ) {
+			bindText( pStmt, ":name", criterion->name.c_str() );
+		}
+		if( criterion->replayGain > -99.0 ) {
+			bindDouble( pStmt, ":replaygain", criterion->replayGain );
+		}
+	}
+
 	if( step( pStmt ) != SQLITE_ROW ) {
 		return NULL;
 	}
 
 	album = new Album();
-	album->id = id;
+	album->id = sqlite3_column_int64( pStmt, column++ );
 	album->name.assign( (const char*) sqlite3_column_text( pStmt, column++ ) );
 	album->replayGain = sqlite3_column_double( pStmt, column++ );
 

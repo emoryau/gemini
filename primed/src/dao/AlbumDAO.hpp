@@ -16,7 +16,7 @@ public:
 	virtual void ensureDBSchema() = 0;
 
 	virtual void free( Album* album ) = 0;
-	virtual Album* getAlbumById( long id ) = 0;
+	virtual Album* getAlbum( Album* criterion ) = 0;
 	virtual void insertOrUpdateAlbum( Album* album ) = 0;
 };
 
