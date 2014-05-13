@@ -6,4 +6,5 @@ libdaosqlite3_la_SOURCES = \
 	ArtistDAOSqlite3Impl.cpp \
 	AlbumDAOSqlite3Impl.cpp \
 	TrackDAOSqlite3Impl.cpp \
+	PlaylistDAOSqlite3Impl.cpp \
 	DAOFactorySqlite3Impl.cpp 

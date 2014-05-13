@@ -9,12 +9,14 @@
 #include "ArtistDAOSqlite3Impl.hpp"
 #include "AlbumDAOSqlite3Impl.hpp"
 #include "TrackDAOSqlite3Impl.hpp"
+#include "PlaylistDAOSqlite3Impl.hpp"
 
 DAOFactorySqlite3Impl::DAOFactorySqlite3Impl(void) {
 	db = NULL;
 	trackDAO = NULL;
 	artistDAO = NULL;
 	albumDAO = NULL;
+	playlistDAO = NULL;
 }
 
 DAOFactorySqlite3Impl::~DAOFactorySqlite3Impl() {
@@ -29,6 +31,10 @@ DAOFactorySqlite3Impl::~DAOFactorySqlite3Impl() {
 	if( albumDAO != NULL ) {
 		delete albumDAO;
 		albumDAO = NULL;
+	}
+	if( playlistDAO != NULL ) {
+		delete playlistDAO;
+		playlistDAO = NULL;
 	}
 	if( db != NULL ) {
 		sqlite3_close( db );
@@ -53,4 +59,6 @@ void DAOFactorySqlite3Impl::setDBFile( const char* filename ) {
 	albumDAO->ensureDBSchema();
 	trackDAO = new TrackDAOSqlite3Impl( db, artistDAO, albumDAO );
 	trackDAO->ensureDBSchema();
+	playlistDAO = new PlaylistDAOSqlite3Impl( db );
+	playlistDAO->ensureDBSchema();
 }
