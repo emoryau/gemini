@@ -96,15 +96,19 @@ void actionPlaylist(void) {
 	TrackDAO* trackDAO = daoFactory->getTrackDAO();
 	ArtistDAO* artistDAO = daoFactory->getArtistDAO();
 	AlbumDAO* albumDAO = daoFactory->getAlbumDAO();
+	PlaylistDAO* playlistDAO = daoFactory->getPlaylistDAO();
 
 	{
 		Playlist* all_tracks = trackDAO->getTrackIds();
+		all_tracks->name.assign( "all_tracks" );
+		playlistDAO->insertOrUpdatePlaylist( all_tracks );
+		/*
 		for( Playlist::TrackIdsIterator iter_track_ids = all_tracks->trackIds.begin(); iter_track_ids != all_tracks->trackIds.end(); iter_track_ids++) {
 			g_print( "%d\t", (*iter_track_ids) );
 		}
 		g_print( "\n" );
+		*/
 		trackDAO->free( all_tracks );
-		all_tracks = NULL;
 	}
 
 	try {

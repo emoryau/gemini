@@ -91,6 +91,47 @@ Playlist* PlaylistDAOSqlite3Impl::getPlaylist( Playlist* criterion ) {
 }
 
 void PlaylistDAOSqlite3Impl::insertOrUpdatePlaylist( Playlist* playlist ) {
+	sqlite3_stmt* pStmt;
+
+	playlist->id = -1;
+
+	pStmt = prepare( "SELECT `PlaylistId` from `Playlists` WHERE `Name` = :name;" );
+	bindText( pStmt, ":name", playlist->name.c_str() );
+	if( step( pStmt ) == SQLITE_ROW ) {
+		playlist->id = sqlite3_column_int64( pStmt, 0 );
+	}
+	finalize( pStmt );
+
+	if( playlist->id < 0 ) {
+		pStmt = prepare( "INSERT INTO `Playlists` (`Name`) VALUES (:name);");
+		bindText( pStmt, ":name", playlist->name.c_str() );
+		step( pStmt );
+		finalize( pStmt );
+		playlist->id = sqlite3_last_insert_rowid( db );
+	} else {
+		pStmt = prepare( "UPDATE `Playlists` SET `name` = :name WHERE `PlaylistId` = :playlistid;" );
+		bindText( pStmt, ":name", playlist->name.c_str() );
+		bindLong( pStmt, ":playlistid", playlist->id );
+		step( pStmt );
+		finalize( pStmt );
+	}
+
+	pStmt = prepare( "DELETE FROM `PlaylistTracks` where `PlaylistId` = :playlistid;" );
+	bindLong( pStmt, ":playlistid", playlist->id );
+	step( pStmt );
+	finalize( pStmt );
+
+	pStmt = prepare( "INSERT INTO `PlaylistTracks` (`PlaylistId`, `Order`, `TrackId`) VALUES (:playlistid, :order, :trackid);");
+	for( Playlist::TrackIdsIterator iter_track_ids = playlist->trackIds.begin(); iter_track_ids != playlist->trackIds.end(); iter_track_ids++ ) {
+		long& track_id = *iter_track_ids;
+		long order = iter_track_ids - playlist->trackIds.begin();
+		reset( pStmt );
+		bindLong( pStmt, ":playlistid", playlist->id );
+		bindLong( pStmt, ":order", order );
+		bindLong( pStmt, ":trackid", track_id );
+		step ( pStmt );
+	}
+	finalize( pStmt );
 }
 
 void PlaylistDAOSqlite3Impl::fillPlaylistTrackIds( Playlist* playlist ) {
@@ -100,7 +141,7 @@ void PlaylistDAOSqlite3Impl::fillPlaylistTrackIds( Playlist* playlist ) {
 
 	sql << "SELECT TrackId FROM `PlaylistTracks`";
 	sql << " WHERE PlaylistId = :playlistid";
-	sql << " ORDER BY `Order`;";
+	sql << " ORDER BY `Order` ASC;";
 	sqlite3_stmt* pStmt = prepare( sql.str().c_str() );
 	bindLong( pStmt, ":playlistid", playlist->id );
 

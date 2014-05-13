@@ -22,6 +22,7 @@ protected:
 	void bindDouble( sqlite3_stmt* pStmt, const char* field, const double d );
 	void bindText( sqlite3_stmt* pStmt, const char* field, const char* text );
 	int step( sqlite3_stmt* pStmt );
+	void reset( sqlite3_stmt* pStmt );
 	void finalize( sqlite3_stmt* pStmt );
 
 	sqlite3* db;

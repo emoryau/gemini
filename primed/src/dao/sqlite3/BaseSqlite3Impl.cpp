@@ -124,3 +124,11 @@ void BaseSqlite3Impl::bindVariablesFromQueryCriteria( sqlite3_stmt* pStmt, Query
 		}
 	}
 }
+
+void BaseSqlite3Impl::reset( sqlite3_stmt* pStmt ) {
+	int rc;
+	rc = sqlite3_reset( pStmt );
+	if( rc != SQLITE_OK ) {
+		throw new Sqlite3Exception( sqlite3_errmsg( db ) );
+	}
+}
