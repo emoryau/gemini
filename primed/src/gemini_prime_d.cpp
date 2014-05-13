@@ -99,8 +99,8 @@ void actionPlaylist(void) {
 
 	{
 		Playlist* all_tracks = trackDAO->getTrackIds();
-		for( Playlist::iterator iter_playlist = all_tracks->begin(); iter_playlist != all_tracks->end(); iter_playlist++) {
-			g_print( "%d\t", (*iter_playlist) );
+		for( Playlist::TrackIdsIterator iter_track_ids = all_tracks->trackIds.begin(); iter_track_ids != all_tracks->trackIds.end(); iter_track_ids++) {
+			g_print( "%d\t", (*iter_track_ids) );
 		}
 		g_print( "\n" );
 		trackDAO->free( all_tracks );
@@ -113,9 +113,9 @@ void actionPlaylist(void) {
 		Artist* artist = artistDAO->getArtist( &criterion );
 		g_print( "Artist test - %s\n", artist->name.c_str() );
 		Playlist* artist_tracks = trackDAO->getTrackIdsByArtist( artist->id );
-		for( Playlist::iterator iter_playlist = artist_tracks->begin(); iter_playlist != artist_tracks->end(); iter_playlist++) {
+		for( Playlist::TrackIdsIterator iter_track_ids = artist_tracks->trackIds.begin(); iter_track_ids != artist_tracks->trackIds.end(); iter_track_ids++) {
 			Track criterion;
-			criterion.id = *iter_playlist;
+			criterion.id = *iter_track_ids;
 			Track* track = trackDAO->getTrack( &criterion );
 			if( track ) {
 				printTrack( track );
@@ -134,9 +134,9 @@ void actionPlaylist(void) {
 		Album* album = albumDAO->getAlbum( &criterion );
 		g_print( "Album test - %s\n", album->name.c_str() );
 		Playlist* album_tracks = trackDAO->getTrackIdsByAlbum( album->id );
-		for( Playlist::iterator iter_playlist = album_tracks->begin(); iter_playlist != album_tracks->end(); iter_playlist++) {
+		for( Playlist::TrackIdsIterator iter_track_ids = album_tracks->trackIds.begin(); iter_track_ids != album_tracks->trackIds.end(); iter_track_ids++) {
 			Track criterion;
-			criterion.id = *iter_playlist;
+			criterion.id = *iter_track_ids;
 			Track* track = trackDAO->getTrack( &criterion );
 			if( track ) {
 				printTrack( track );

@@ -234,7 +234,7 @@ Playlist* TrackDAOSqlite3Impl::getTrackIds( ) {
 			"`TrackId` "
 			" FROM `Tracks`;" );
 	while( step( pStmt ) == SQLITE_ROW ) {
-		playlist->push_back( sqlite3_column_int64( pStmt, 0) );
+		playlist->trackIds.push_back( sqlite3_column_int64( pStmt, 0) );
 	}
 
 	finalize( pStmt );
@@ -255,7 +255,7 @@ Playlist* TrackDAOSqlite3Impl::getTrackIdsByArtist( long artist_id ) {
 			" WHERE `ArtistId` = :artistid;");
 	bindLong( pStmt, ":artistid", artist_id );
 	while( step( pStmt ) == SQLITE_ROW ) {
-		playlist->push_back( sqlite3_column_int64( pStmt, 0) );
+		playlist->trackIds.push_back( sqlite3_column_int64( pStmt, 0) );
 	}
 
 	finalize( pStmt );
@@ -276,7 +276,7 @@ Playlist* TrackDAOSqlite3Impl::getTrackIdsByAlbum( long album_id ) {
 			" WHERE `AlbumId` = :albumid;");
 	bindLong( pStmt, ":albumid", album_id );
 	while( step( pStmt ) == SQLITE_ROW ) {
-		playlist->push_back( sqlite3_column_int64( pStmt, 0) );
+		playlist->trackIds.push_back( sqlite3_column_int64( pStmt, 0) );
 	}
 
 	finalize( pStmt );

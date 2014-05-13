@@ -8,9 +8,16 @@
 #ifndef PLAYLIST_HPP_
 #define PLAYLIST_HPP_
 
+#include <string>
 #include <vector>
 
-typedef std::vector<long> Playlist;
+class Playlist {
+public:
+	typedef std::vector<long>::iterator TrackIdsIterator;
 
+	long id;
+	std::string name;
+	std::vector<long> trackIds;
+};
 
 #endif /* PLAYLIST_HPP_ */
