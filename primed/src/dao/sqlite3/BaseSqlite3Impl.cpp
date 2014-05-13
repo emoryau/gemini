@@ -25,6 +25,16 @@ sqlite3_stmt* BaseSqlite3Impl::prepare( const char* sql ) {
 	return pStmt;
 }
 
+void BaseSqlite3Impl::bindInt( sqlite3_stmt* pStmt, const char* field, int i ) {
+	int rc;
+	rc = sqlite3_bind_int( pStmt,
+			sqlite3_bind_parameter_index( pStmt, field ),
+			i);
+	if( rc != SQLITE_OK ) {
+		throw new Sqlite3Exception( sqlite3_errstr(rc) );
+	}
+}
+
 void BaseSqlite3Impl::bindLong( sqlite3_stmt* pStmt, const char* field, const long l ) {
 	int rc;
 	rc = sqlite3_bind_int64( pStmt,
@@ -66,9 +76,9 @@ int BaseSqlite3Impl::step( sqlite3_stmt* pStmt ) {
 	return rc;
 }
 
-void BaseSqlite3Impl::finalize( sqlite3_stmt* ppStmt ) {
+void BaseSqlite3Impl::finalize( sqlite3_stmt* pStmt ) {
 	int rc;
-	rc = sqlite3_finalize( ppStmt );
+	rc = sqlite3_finalize( pStmt );
 	if( rc != SQLITE_OK ) {
 		throw new Sqlite3Exception( sqlite3_errmsg( db ) );
 	}
@@ -101,6 +111,9 @@ void BaseSqlite3Impl::bindVariablesFromQueryCriteria( sqlite3_stmt* pStmt, Query
 		switch( qc.field_type ) {
 			case QueryCriteria::TEXT:
 				bindText( pStmt, qc.bind_var, (const char*)qc.value );
+				break;
+			case QueryCriteria::INT:
+				bindInt( pStmt, qc.bind_var, *(int*)qc.value );
 				break;
 			case QueryCriteria::LONG:
 				bindLong( pStmt, qc.bind_var, *(const long*)qc.value );

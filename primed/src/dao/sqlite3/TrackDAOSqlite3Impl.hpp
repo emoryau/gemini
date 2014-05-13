@@ -21,7 +21,7 @@ public:
 
 	virtual void free( Track* track );
 	virtual void free( Playlist* playlist );
-	virtual Track* getTrackById( long id );
+	virtual Track* getTrack( Track* criterion );
 	virtual Playlist* getTrackIds( );
 	virtual Playlist* getTrackIdsByArtist( long artist_id );
 	virtual Playlist* getTrackIdsByAlbum( long album_id );

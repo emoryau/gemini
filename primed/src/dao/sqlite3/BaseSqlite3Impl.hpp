@@ -17,11 +17,12 @@ protected:
 	void checkDb();
 
 	sqlite3_stmt* prepare( const char* sql );
-	void bindLong( sqlite3_stmt* ppStmt, const char* field, const long l );
-	void bindDouble( sqlite3_stmt* ppStmt, const char* field, const double d );
-	void bindText( sqlite3_stmt* ppStmt, const char* field, const char* text );
+	void bindInt( sqlite3_stmt* pStmt, const char* field, int i );
+	void bindLong( sqlite3_stmt* pStmt, const char* field, const long l );
+	void bindDouble( sqlite3_stmt* pStmt, const char* field, const double d );
+	void bindText( sqlite3_stmt* pStmt, const char* field, const char* text );
 	int step( sqlite3_stmt* pStmt );
-	void finalize( sqlite3_stmt* ppStmt );
+	void finalize( sqlite3_stmt* pStmt );
 
 	sqlite3* db;
 
@@ -30,6 +31,7 @@ protected:
 		const char* bind_var;
 		enum {
 			TEXT,
+			INT,
 			LONG,
 			DOUBLE
 		} field_type;

@@ -13,7 +13,7 @@ Track::Track() {
 	album = NULL;
 	replayGain = -100.0f;
 	trackNumber = 0;
-	discNumber = 1;
+	discNumber = 0;
 }
 
 Track::Track( TagExtractor& te ) {

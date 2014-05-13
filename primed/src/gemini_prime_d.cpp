@@ -114,10 +114,13 @@ void actionPlaylist(void) {
 		g_print( "Artist test - %s\n", artist->name.c_str() );
 		Playlist* artist_tracks = trackDAO->getTrackIdsByArtist( artist->id );
 		for( Playlist::iterator iter_playlist = artist_tracks->begin(); iter_playlist != artist_tracks->end(); iter_playlist++) {
-			long trackId = *iter_playlist;
-			Track* track = trackDAO->getTrackById( trackId );
-			printTrack( track );
-			trackDAO->free( track );
+			Track criterion;
+			criterion.id = *iter_playlist;
+			Track* track = trackDAO->getTrack( &criterion );
+			if( track ) {
+				printTrack( track );
+				trackDAO->free( track );
+			}
 		}
 		trackDAO->free( artist_tracks );
 		artist_tracks = NULL;
@@ -132,10 +135,13 @@ void actionPlaylist(void) {
 		g_print( "Album test - %s\n", album->name.c_str() );
 		Playlist* album_tracks = trackDAO->getTrackIdsByAlbum( album->id );
 		for( Playlist::iterator iter_playlist = album_tracks->begin(); iter_playlist != album_tracks->end(); iter_playlist++) {
-			long trackId = *iter_playlist;
-			Track* track = trackDAO->getTrackById( trackId );
-			printTrack( track );
-			trackDAO->free( track );
+			Track criterion;
+			criterion.id = *iter_playlist;
+			Track* track = trackDAO->getTrack( &criterion );
+			if( track ) {
+				printTrack( track );
+				trackDAO->free( track );
+			}
 		}
 		trackDAO->free( album_tracks );
 		album_tracks = NULL;
@@ -149,7 +155,9 @@ void actionDbTest(void) {
 			DAOFactorySqlite3Impl* daoFactory = new DAOFactorySqlite3Impl();
 			daoFactory->setDBFile( database_filename );
 			TrackDAO* trackDAO = daoFactory->getTrackDAO();
-			Track* track = trackDAO->getTrackById( 120 );
+			Track criterion;
+			criterion.id = 120;
+			Track* track = trackDAO->getTrack( &criterion );
 			g_print( "%s - '%s' - %d.%d - %s\n", track->artist ? track->artist->name.c_str() : "<no artist>",
 					track->album ? track->album->name.c_str() : "<no album>", track->discNumber, track->trackNumber, track->name.c_str() );
 			trackDAO->free( track );

@@ -6,6 +6,7 @@
  */
 
 #include "TrackDAOSqlite3Impl.hpp"
+#include <glib.h>
 
 TrackDAOSqlite3Impl::TrackDAOSqlite3Impl( sqlite3* db, ArtistDAO* artistDAO, AlbumDAO* albumDAO ) {
 	this->db = db;
@@ -17,26 +18,73 @@ TrackDAOSqlite3Impl::~TrackDAOSqlite3Impl() {
 	// TODO Auto-generated destructor stub
 }
 
-Track* TrackDAOSqlite3Impl::getTrackById( long id ) {
+Track* TrackDAOSqlite3Impl::getTrack( Track* criterion ) {
 	Track* track;
 	Artist* artist_criterion;
 	Album* album_criterion;
 	int column = 0;
+	QueryCriteriaList queryCriteriaList;
+	std::string* sql;
 
 	checkDb();
 
-	sqlite3_stmt* pStmt = prepare( "SELECT "
-			"`Filename`, "
-			"`Checksum`, "
-			"`Name`, "
-			"`Art_Filename`, "
-			"`ArtistId`, "
-			"`AlbumId`, "
-			"`TrackNumber`, "
-			"`DiscNumber`, "
-			"`ReplayGain`"
-			" FROM `Tracks` WHERE `TrackId` = :trackid" );
-	bindLong( pStmt, ":trackid", id );
+	if( criterion != NULL ) {
+		if( criterion->id >= 0 ) {
+			QueryCriteria qc = {"TrackId", ":trackid", QueryCriteria::LONG};
+			qc.value = &criterion->id;
+			queryCriteriaList.push_back(qc);
+		}
+		if( !criterion->filename.empty() ) {
+			QueryCriteria qc = {"Filename", ":filename", QueryCriteria::TEXT};
+			qc.value = criterion->filename.c_str();
+			queryCriteriaList.push_back(qc);
+		}
+		if( !criterion->name.empty() ) {
+			QueryCriteria qc = {"Name", ":name", QueryCriteria::TEXT};
+			qc.value = criterion->name.c_str();
+			queryCriteriaList.push_back(qc);
+		}
+		if( !criterion->artFilename.empty() ) {
+			QueryCriteria qc = {"Art_Filename", ":artfilename", QueryCriteria::TEXT};
+			qc.value = criterion->artFilename.c_str();
+			queryCriteriaList.push_back(qc);
+		}
+		if( criterion->artist && criterion->artist->id >= 0 ) {
+			QueryCriteria qc = {"ArtistId", ":artistid", QueryCriteria::LONG};
+			qc.value = &criterion->artist->id;
+			queryCriteriaList.push_back(qc);
+		}
+		if( criterion->album && criterion->album->artist && criterion->album->artist->id >= 0 ) {
+			QueryCriteria qc = {"AlbumArtistId", ":albumartistid", QueryCriteria::LONG};
+			qc.value = &criterion->album->artist->id;
+			queryCriteriaList.push_back(qc);
+		}
+		if( criterion->album && criterion->album->id >= 0 ) {
+			QueryCriteria qc = {"AlbumId", ":albumid", QueryCriteria::LONG};
+			qc.value = &criterion->album->id;
+			queryCriteriaList.push_back(qc);
+		}
+		if( criterion->discNumber > 0 ) {
+			QueryCriteria qc = {"DiscNumber", ":discnumber", QueryCriteria::INT};
+			qc.value = &criterion->discNumber;
+			queryCriteriaList.push_back(qc);
+		}
+		if( criterion->trackNumber > 0 ) {
+			QueryCriteria qc = {"TrackNumber", ":tracknumber", QueryCriteria::INT};
+			qc.value = &criterion->trackNumber;
+			queryCriteriaList.push_back(qc);
+		}
+		if( criterion->replayGain > -99.0 ) {
+			QueryCriteria qc = {"ReplayGain", ":replaygain", QueryCriteria::DOUBLE};
+			qc.value = &criterion->replayGain;
+			queryCriteriaList.push_back(qc);
+		}
+	}
+
+	sql = buildSqlFromQueryCriteria( "Tracks", queryCriteriaList );
+	sqlite3_stmt* pStmt = prepare( sql->c_str() );
+	bindVariablesFromQueryCriteria( pStmt, queryCriteriaList );
+
 	if( step( pStmt ) != SQLITE_ROW ) {
 		return NULL;
 	}
@@ -44,13 +92,15 @@ Track* TrackDAOSqlite3Impl::getTrackById( long id ) {
 	track = new Track();
 	artist_criterion = new Artist();
 	album_criterion = new Album();
+	album_criterion->artist = new Artist();
 
-	track->id = id;
+	track->id = sqlite3_column_int64( pStmt, column++ );
 	track->filename.assign( (const char*) sqlite3_column_text( pStmt, column++ ) );
 	column++; //track->checksum.assign( (const char*)sqlite3_column_text( pStmt, column++;  ) );
 	track->name.assign( (const char*) sqlite3_column_text( pStmt, column++ ) );
 	track->artFilename.assign( (const char*) sqlite3_column_text( pStmt, column++ ) );
 	artist_criterion->id = sqlite3_column_int64( pStmt, column++ );
+	album_criterion->artist->id = sqlite3_column_int64( pStmt, column++ );
 	album_criterion->id = sqlite3_column_int64( pStmt, column++ );
 	track->trackNumber = sqlite3_column_int( pStmt, column++ );
 	track->discNumber = sqlite3_column_int( pStmt, column++ );
@@ -65,6 +115,8 @@ Track* TrackDAOSqlite3Impl::getTrackById( long id ) {
 
 	finalize( pStmt );
 
+	delete album_criterion->artist;
+	album_criterion->artist = NULL;
 	delete album_criterion;
 	delete artist_criterion;
 
