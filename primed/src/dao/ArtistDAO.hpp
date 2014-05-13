@@ -9,7 +9,7 @@
 #define ARTISTDAO_HPP_
 
 
-#include "../Artist.hpp"
+#include "Artist.hpp"
 
 class ArtistDAO {
 public:

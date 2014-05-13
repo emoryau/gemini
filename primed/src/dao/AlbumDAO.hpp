@@ -8,7 +8,7 @@
 #ifndef ALBUMDAO_HPP_
 #define ALBUMDAO_HPP_
 
-#include "../Album.hpp"
+#include "Album.hpp"
 
 class AlbumDAO {
 public:
