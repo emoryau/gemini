@@ -150,7 +150,7 @@ void TrackDAOSqlite3Impl::insertOrUpdateTrack( Track* track ) {
 				"`TrackNumber` = :track_number,"
 				"`DiscNumber` = :disc_number,"
 				"`ReplayGain` = :replay_gain "
-				"WHERE `Filename` = :filename" );
+				"WHERE `Filename` = :filename;" );
 	} else {
 		pStmt = prepare(
 				"INSERT INTO `Tracks`"
