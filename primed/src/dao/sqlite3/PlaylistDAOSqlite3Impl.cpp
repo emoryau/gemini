@@ -7,6 +7,7 @@
 
 #include "PlaylistDAOSqlite3Impl.hpp"
 
+#include <glib.h>
 #include <string>
 #include <sstream>
 
@@ -121,16 +122,29 @@ void PlaylistDAOSqlite3Impl::insertOrUpdatePlaylist( Playlist* playlist ) {
 	step( pStmt );
 	finalize( pStmt );
 
-	pStmt = prepare( "INSERT INTO `PlaylistTracks` (`PlaylistId`, `Order`, `TrackId`) VALUES (:playlistid, :order, :trackid);");
+	std::stringstream sql;
+
+	char separator = ' ';
 	for( Playlist::TrackIdsIterator iter_track_ids = playlist->trackIds.begin(); iter_track_ids != playlist->trackIds.end(); iter_track_ids++ ) {
 		long& track_id = *iter_track_ids;
 		long order = iter_track_ids - playlist->trackIds.begin();
-		reset( pStmt );
-		bindLong( pStmt, ":playlistid", playlist->id );
-		bindLong( pStmt, ":order", order );
-		bindLong( pStmt, ":trackid", track_id );
-		step ( pStmt );
+		if( order % 500 == 0 ) {
+			if( order > 0 ) {
+				sql << ";";
+				pStmt = prepare( sql.str().c_str() );
+				step( pStmt );
+				finalize( pStmt );
+				sql.str(std::string());
+			}
+			sql << "INSERT INTO `PlaylistTracks` (`PlaylistId`, `Order`, `TrackId`) VALUES";
+			separator = ' ';
+		}
+		sql << separator << "(" << playlist->id << "," << order << "," << track_id << ")";
+		separator = ',';
 	}
+	sql << ";";
+	pStmt = prepare( sql.str().c_str() );
+	step( pStmt );
 	finalize( pStmt );
 }
 
