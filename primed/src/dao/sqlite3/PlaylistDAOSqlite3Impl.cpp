@@ -165,3 +165,19 @@ void PlaylistDAOSqlite3Impl::fillPlaylistTrackIds( Playlist* playlist ) {
 
 	finalize( pStmt );
 }
+
+void PlaylistDAOSqlite3Impl::deletePlaylist( Playlist* playlist ) {
+	sqlite3_stmt* pStmt;
+
+	checkDb();
+
+	pStmt = prepare( "DELETE FROM `PlaylistTracks` WHERE `PlaylistId` = :playlistid;" );
+	bindLong( pStmt, ":playlistid", playlist->id );
+	step( pStmt );
+	finalize( pStmt );
+
+	pStmt = prepare( "DELETE FROM `Playlists` WHERE `PlaylistId` = :playlistid;" );
+	bindLong( pStmt, ":playlistid", playlist->id );
+	step( pStmt );
+	finalize( pStmt );
+}

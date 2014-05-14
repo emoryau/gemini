@@ -20,6 +20,7 @@ public:
 	virtual void free( Playlist* playlist );
 	virtual Playlist* getPlaylist( Playlist* criterion );
 	virtual void insertOrUpdatePlaylist( Playlist* playlist );
+	virtual void deletePlaylist( Playlist* playlist );
 
 protected:
 	void fillPlaylistTrackIds( Playlist* playlist );
