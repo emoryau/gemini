@@ -98,7 +98,7 @@ void actionPlaylist(void) {
 	AlbumDAO* albumDAO = daoFactory->getAlbumDAO();
 	PlaylistDAO* playlistDAO = daoFactory->getPlaylistDAO();
 
-	{
+	try {
 		Playlist* all_tracks = trackDAO->getTrackIds();
 		all_tracks->name.assign( "all_tracks" );
 		playlistDAO->insertOrUpdatePlaylist( all_tracks );
@@ -109,6 +109,8 @@ void actionPlaylist(void) {
 		g_print( "\n" );
 		*/
 		trackDAO->free( all_tracks );
+	} catch (std::exception* ex ) {
+		g_error( ex->what() );
 	}
 
 	try {
