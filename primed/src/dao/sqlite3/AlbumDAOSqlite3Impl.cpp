@@ -10,10 +10,7 @@
 #include "AlbumDAOSqlite3Impl.hpp"
 #include "GeminiException.hpp"
 
-AlbumDAOSqlite3Impl::AlbumDAOSqlite3Impl( sqlite3* db, ArtistDAO* artistDAO ) {
-	this->db = db;
-	this->artistDAO = artistDAO;
-}
+AlbumDAOSqlite3Impl::AlbumDAOSqlite3Impl( sqlite3* db, ArtistDAO* artistDAO ): BaseSqlite3Impl( db ), artistDAO( artistDAO ) {};
 
 AlbumDAOSqlite3Impl::~AlbumDAOSqlite3Impl() {
 	// TODO Auto-generated destructor stub

@@ -14,6 +14,7 @@
 
 class BaseSqlite3Impl {
 protected:
+	BaseSqlite3Impl( sqlite3* db ): db(db) { };
 	void checkDb();
 
 	sqlite3_stmt* prepare( const char* sql );

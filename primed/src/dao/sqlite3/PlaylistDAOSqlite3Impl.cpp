@@ -15,10 +15,6 @@ PlaylistDAOSqlite3Impl::~PlaylistDAOSqlite3Impl() {
 	// TODO Auto-generated destructor stub
 }
 
-PlaylistDAOSqlite3Impl::PlaylistDAOSqlite3Impl( sqlite3* db ) {
-	this->db = db;
-}
-
 void PlaylistDAOSqlite3Impl::ensureDBSchema() {
 	int rc;
 	char *zErrMsg = NULL;

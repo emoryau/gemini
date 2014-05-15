@@ -9,11 +9,8 @@
 #include "TrackDAOSqlite3Impl.hpp"
 #include "GeminiException.hpp"
 
-TrackDAOSqlite3Impl::TrackDAOSqlite3Impl( sqlite3* db, ArtistDAO* artistDAO, AlbumDAO* albumDAO ) {
-	this->db = db;
-	this->artistDAO = artistDAO;
-	this->albumDAO = albumDAO;
-}
+TrackDAOSqlite3Impl::TrackDAOSqlite3Impl( sqlite3* db, ArtistDAO* artistDAO, AlbumDAO* albumDAO ):
+	BaseSqlite3Impl( db ), artistDAO( artistDAO ), albumDAO( albumDAO ) { }
 
 TrackDAOSqlite3Impl::~TrackDAOSqlite3Impl() {
 	// TODO Auto-generated destructor stub

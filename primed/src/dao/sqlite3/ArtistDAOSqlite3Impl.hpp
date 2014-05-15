@@ -13,7 +13,7 @@
 
 class ArtistDAOSqlite3Impl: public ArtistDAO, public BaseSqlite3Impl {
 public:
-	ArtistDAOSqlite3Impl( sqlite3* db );
+	ArtistDAOSqlite3Impl( sqlite3* db ): BaseSqlite3Impl( db ) { };
 	virtual ~ArtistDAOSqlite3Impl();
 	virtual void ensureDBSchema();
 

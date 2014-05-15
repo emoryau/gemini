@@ -13,8 +13,8 @@
 
 class PlaylistDAOSqlite3Impl: public BaseSqlite3Impl, public PlaylistDAO {
 public:
+	PlaylistDAOSqlite3Impl( sqlite3* db ): BaseSqlite3Impl( db ) { };
 	virtual ~PlaylistDAOSqlite3Impl();
-	PlaylistDAOSqlite3Impl( sqlite3* db );
 	virtual void ensureDBSchema();
 
 	virtual void free( Playlist* playlist );
