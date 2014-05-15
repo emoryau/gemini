@@ -80,62 +80,62 @@ void PlaylistService::cuePreviousTrack() {
 	}
 }
 
-void PlaylistService::cueCurrentArtist() {
-	Track criterion;
-	criterion.id = *currentPlaylistIter;
-	Track* track = daoFactory->getTrackDAO()->getTrack( &criterion );
-	if( track->artist == NULL ) {
-		// TODO: notify of error
-		return;
-	}
+void PlaylistService::cueArtistById( long artist_id ) {
 	exitMode();
-	if( track->album->artist != NULL ) {
-		currentPlaylist = daoFactory->getTrackDAO()->getTrackIdsByArtist( track->album->artist->id );
-	} else {
-		currentPlaylist = daoFactory->getTrackDAO()->getTrackIdsByArtist( track->artist->id );
+	currentPlaylist = daoFactory->getTrackDAO()->getTrackIdsByArtist( artist_id );
+	if( currentPlaylist == NULL ) {
+		//TODO: report error
+		currentPlaylist = everythingPlaylist;
+		return;
 	}
 	std::random_shuffle( currentPlaylist->trackIds.begin(), currentPlaylist->trackIds.end() );
 	currentPlaylistIter = currentPlaylist->trackIds.begin();
 	mode = ARTIST;
 }
 
-void PlaylistService::cueCurrentAlbumShuffled() {
-	Track criterion;
-	criterion.id = *currentPlaylistIter;
-	Track* track = daoFactory->getTrackDAO()->getTrack( &criterion );
-	if( track->album == NULL ) {
-		// TODO: notify of error
+void PlaylistService::cueAlbumShuffledById( long album_id ) {
+	exitMode();
+	currentPlaylist = daoFactory->getTrackDAO()->getTrackIdsByAlbum( album_id );
+	if( currentPlaylist == NULL ) {
+		//TODO: report error
+		currentPlaylist = everythingPlaylist;
+		currentPlaylistIter = everythingPlaylistIter;
+		mode = EVERYTHING;
 		return;
 	}
-	exitMode();
-	currentPlaylist = daoFactory->getTrackDAO()->getTrackIdsByAlbum( track->album->id );
 	std::random_shuffle( currentPlaylist->trackIds.begin(), currentPlaylist->trackIds.end() );
 
 	// Move current track to beginning
-	Playlist::TrackIdsIterator shuffledIter = std::find( currentPlaylist->trackIds.begin(), currentPlaylist->trackIds.end(), track->id );
-	std::swap( *currentPlaylist->trackIds.begin(), *shuffledIter );
+	Playlist::TrackIdsIterator shuffledIter = std::find( currentPlaylist->trackIds.begin(), currentPlaylist->trackIds.end(), *everythingPlaylistIter );
+	if( shuffledIter == currentPlaylist->trackIds.end() ) {
+		// TODO: Report error in db: Could not find current track
+	} else {
+		std::swap( *currentPlaylist->trackIds.begin(), *shuffledIter );
+	}
 
 	currentPlaylistIter = currentPlaylist->trackIds.begin();
 	mode = ALBUM_SHUFFLED;
-	daoFactory->getTrackDAO()->free( track );
 }
 
-void PlaylistService::cueCurrentAlbumOrdered() {
-	Track criterion;
-	criterion.id = *currentPlaylistIter;
-	Track* track = daoFactory->getTrackDAO()->getTrack( &criterion );
-	if( track->album == NULL ) {
-		// TODO: notify of error
+void PlaylistService::cueAlbumOrderedById( long album_id ) {
+	exitMode();
+	currentPlaylist = daoFactory->getTrackDAO()->getTrackIdsByAlbum( album_id );
+	if( currentPlaylist == NULL ) {
+		//TODO: report error
+		currentPlaylist = everythingPlaylist;
+		currentPlaylistIter = everythingPlaylistIter;
+		mode = EVERYTHING;
 		return;
 	}
-	exitMode();
-	currentPlaylist = daoFactory->getTrackDAO()->getTrackIdsByAlbum( track->album->id );
 	currentPlaylistIter = currentPlaylist->trackIds.begin();
 	mode = ALBUM_ORDERED;
-	daoFactory->getTrackDAO()->free( track );
 }
 
 void PlaylistService::cueCustomPlaylist( Playlist* playlist ) {
+	if( playlist == NULL ) {
+		//TODO: report error
+		return;
+	}
 	exitMode();
 	currentPlaylist = new Playlist( *playlist );
 	currentPlaylistIter = currentPlaylist->trackIds.begin();

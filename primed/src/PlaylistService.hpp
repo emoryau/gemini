@@ -30,9 +30,9 @@ public:
 	void cueNextTrack();
 	void cuePreviousTrack();
 
-	void cueCurrentArtist();
-	void cueCurrentAlbumShuffled();
-	void cueCurrentAlbumOrdered();
+	void cueArtistById( long artist_id );
+	void cueAlbumShuffledById( long album_id );
+	void cueAlbumOrderedById( long album_id );
 
 	void cueCustomPlaylist( Playlist* playlist );
 
