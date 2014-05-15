@@ -272,9 +272,10 @@ Playlist* TrackDAOSqlite3Impl::getTrackIdsByAlbum( long album_id ) {
 	playlist = new Playlist();
 
 	sqlite3_stmt* pStmt = prepare( "SELECT "
-			"`TrackId` "
+			"`TrackId`, `DiscNumber`, `TrackNumber` "
 			" FROM `Tracks`"
-			" WHERE `AlbumId` = :albumid;");
+			" WHERE `AlbumId` = :albumid"
+			" ORDER BY `DiscNumber` ASC, `TrackNumber` ASC");
 	bindLong( pStmt, ":albumid", album_id );
 	while( step( pStmt ) == SQLITE_ROW ) {
 		playlist->trackIds.push_back( sqlite3_column_int64( pStmt, 0) );
