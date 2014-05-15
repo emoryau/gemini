@@ -97,8 +97,8 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_gemini_prime_d_OBJECTS = Filesystem.$(OBJEXT) \
 	TagExtractor.$(OBJEXT) MetadataStore.$(OBJEXT) Track.$(OBJEXT) \
-	Album.$(OBJEXT) Artist.$(OBJEXT) GeminiException.$(OBJEXT) \
-	gemini_prime_d.$(OBJEXT)
+	Album.$(OBJEXT) Artist.$(OBJEXT) PlaylistService.$(OBJEXT) \
+	GeminiException.$(OBJEXT) gemini_prime_d.$(OBJEXT)
 gemini_prime_d_OBJECTS = $(am_gemini_prime_d_OBJECTS)
 am__DEPENDENCIES_1 =
 gemini_prime_d_DEPENDENCIES = libmagic/libmagic.la \
@@ -142,24 +142,6 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
-	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
-	$(AM_CFLAGS) $(CFLAGS)
-AM_V_CC = $(am__v_CC_@AM_V@)
-am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
-am__v_CC_0 = @echo "  CC      " $@;
-am__v_CC_1 = 
-CCLD = $(CC)
-LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-AM_V_CCLD = $(am__v_CCLD_@AM_V@)
-am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
-am__v_CCLD_0 = @echo "  CCLD    " $@;
-am__v_CCLD_1 = 
 SOURCES = $(gemini_prime_d_SOURCES)
 DIST_SOURCES = $(gemini_prime_d_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
@@ -359,13 +341,13 @@ AM_CPPFLAGS = $(DEPS_CFLAGS) $(SQLITE_CFLAGS)
 SUBDIRS = libmagic dao/sqlite3
 gemini_prime_d_LDADD = libmagic/libmagic.la dao/sqlite3/libdaosqlite3.la $(DEPS_LIBS) $(SQLITE_LIBS) 
 gemini_prime_d_SOURCES = \
-	Filesystem.cpp Filesystem.hpp \
-	TagExtractor.cpp TagExtractor.hpp \
-	MetadataStore.cpp MetadataStore.hpp \
-	Track.cpp Track.hpp \
-	Album.cpp Album.hpp \
-	Artist.cpp Artist.hpp \
-	Playlist.hpp \
+	Filesystem.cpp \
+	TagExtractor.cpp \
+	MetadataStore.cpp \
+	Track.cpp \
+	Album.cpp \
+	Artist.cpp \
+	PlaylistService.cpp \
 	GeminiException.cpp \
 	gemini_prime_d.cpp
 
@@ -468,6 +450,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Filesystem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GeminiException.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MetadataStore.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PlaylistService.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TagExtractor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Track.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gemini_prime_d.Po@am__quote@

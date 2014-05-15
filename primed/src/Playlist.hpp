@@ -15,6 +15,8 @@ class Playlist {
 public:
 	typedef std::vector<long>::iterator TrackIdsIterator;
 
+	Playlist(): id(-1), name("") {} ;
+
 	long id;
 	std::string name;
 	std::vector<long> trackIds;

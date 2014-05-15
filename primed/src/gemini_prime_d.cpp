@@ -5,10 +5,6 @@
  *      Author: emoryau
  */
 
-#include "Filesystem.hpp"
-#include "TagExtractor.hpp"
-#include "MetadataStore.hpp"
-#include "dao/sqlite3/DAOFactorySqlite3Impl.hpp"
 #include <glib.h>
 #include <stdlib.h>
 #include <iostream>
@@ -17,6 +13,12 @@
 #include <list>
 #include <sstream>
 #include <iomanip>
+
+#include "Filesystem.hpp"
+#include "TagExtractor.hpp"
+#include "MetadataStore.hpp"
+#include "dao/sqlite3/DAOFactorySqlite3Impl.hpp"
+#include "PlaylistService.hpp"
 
 static const char* extension_blacklist[] = { ".jpg", ".cue", ".db", ".m3u", ".ini", ".sfv", ".pdf", ".log", ".txt", ".png", NULL };
 static const gchar* scan_filename = "/home/emoryau/testmusic";
@@ -93,66 +95,21 @@ void actionScan( void ) {
 void actionPlaylist(void) {
 	DAOFactorySqlite3Impl* daoFactory = new DAOFactorySqlite3Impl();
 	daoFactory->setDBFile( database_filename );
-	TrackDAO* trackDAO = daoFactory->getTrackDAO();
-	ArtistDAO* artistDAO = daoFactory->getArtistDAO();
-	AlbumDAO* albumDAO = daoFactory->getAlbumDAO();
-	PlaylistDAO* playlistDAO = daoFactory->getPlaylistDAO();
+	PlaylistService* playlistService = new PlaylistService( daoFactory );
 
 	try {
-		Playlist* all_tracks = trackDAO->getTrackIds();
-		all_tracks->name.assign( "all_tracks" );
-		playlistDAO->insertOrUpdatePlaylist( all_tracks );
+		g_print( "Current Track ID: %d\n", playlistService->getCurrentTrackId() );
 		/*
 		for( Playlist::TrackIdsIterator iter_track_ids = all_tracks->trackIds.begin(); iter_track_ids != all_tracks->trackIds.end(); iter_track_ids++) {
 			g_print( "%d\t", (*iter_track_ids) );
 		}
 		g_print( "\n" );
 		*/
-		trackDAO->free( all_tracks );
 	} catch (std::exception* ex ) {
 		g_error( ex->what() );
 	}
 
-	try {
-		Artist criterion;
-		criterion.name.assign( "Adele" );
-		Artist* artist = artistDAO->getArtist( &criterion );
-		g_print( "Artist test - %s\n", artist->name.c_str() );
-		Playlist* artist_tracks = trackDAO->getTrackIdsByArtist( artist->id );
-		for( Playlist::TrackIdsIterator iter_track_ids = artist_tracks->trackIds.begin(); iter_track_ids != artist_tracks->trackIds.end(); iter_track_ids++) {
-			Track criterion;
-			criterion.id = *iter_track_ids;
-			Track* track = trackDAO->getTrack( &criterion );
-			if( track ) {
-				printTrack( track );
-				trackDAO->free( track );
-			}
-		}
-		trackDAO->free( artist_tracks );
-		artist_tracks = NULL;
-	} catch (std::exception* ex ) {
-		g_error( ex->what() );
-	}
-
-	{
-		Album criterion;
-		criterion.name.assign( "21" );
-		Album* album = albumDAO->getAlbum( &criterion );
-		g_print( "Album test - %s\n", album->name.c_str() );
-		Playlist* album_tracks = trackDAO->getTrackIdsByAlbum( album->id );
-		for( Playlist::TrackIdsIterator iter_track_ids = album_tracks->trackIds.begin(); iter_track_ids != album_tracks->trackIds.end(); iter_track_ids++) {
-			Track criterion;
-			criterion.id = *iter_track_ids;
-			Track* track = trackDAO->getTrack( &criterion );
-			if( track ) {
-				printTrack( track );
-				trackDAO->free( track );
-			}
-		}
-		trackDAO->free( album_tracks );
-		album_tracks = NULL;
-	}
-
+	delete playlistService;
 	delete daoFactory;
 }
 
