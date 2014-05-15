@@ -28,15 +28,5 @@ private:
 	DAOFactory* daoFactory;
 };
 
-class MetadataStoreException: public std::exception {
-public:
-	MetadataStoreException( const char* what ) throw();
-	virtual ~MetadataStoreException() throw() { };
-
-	virtual const char* what() const throw();
-
-private:
-	std::string cause;
-};
 
 #endif /* METADATASTORE_HPP_ */

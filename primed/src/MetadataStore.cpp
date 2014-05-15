@@ -32,12 +32,3 @@ void MetadataStore::addExtractedTrack( TagExtractor& te ) {
 	delete album;
 	delete artist;
 }
-
-MetadataStoreException::MetadataStoreException( const char* what ) throw() {
-	cause.assign( what );
-}
-
-const char* MetadataStoreException::what() const throw() {
-	return cause.c_str();
-}
-

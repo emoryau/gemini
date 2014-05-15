@@ -84,11 +84,7 @@ void actionScan( void ) {
 			continue;
 
 		extractor.readTags( filename.c_str() );
-		try {
-			store.addExtractedTrack( extractor );
-		} catch( MetadataStoreException* e ) {
-			g_error( "addExtractedTrack() threw:\n%s", e->what() );
-		}
+		store.addExtractedTrack( extractor );
 	}
 }
 
