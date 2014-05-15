@@ -22,6 +22,7 @@ Track::Track( TagExtractor& te ) {
 	if( te.getTitle() ) {
 		name.assign( te.getTitle() );
 	}
+	id = -1;
 	artist = NULL;
 	album = NULL;
 	replayGain = te.getTrackGain();
