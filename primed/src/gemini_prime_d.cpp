@@ -89,24 +89,21 @@ void actionScan( void ) {
 }
 
 void actionPlaylist(void) {
-	DAOFactorySqlite3Impl* daoFactory = new DAOFactorySqlite3Impl();
-	daoFactory->setDBFile( database_filename );
-	PlaylistService* playlistService = new PlaylistService( daoFactory );
-
 	try {
-		g_print( "Current Track ID: %d\n", playlistService->getCurrentTrackId() );
-		/*
-		for( Playlist::TrackIdsIterator iter_track_ids = all_tracks->trackIds.begin(); iter_track_ids != all_tracks->trackIds.end(); iter_track_ids++) {
-			g_print( "%d\t", (*iter_track_ids) );
-		}
-		g_print( "\n" );
-		*/
+		DAOFactorySqlite3Impl* daoFactory = new DAOFactorySqlite3Impl();
+		daoFactory->setDBFile( database_filename );
+		PlaylistService* playlistService = new PlaylistService( daoFactory );
+
+		g_print( "Track ID before refresh: %d\n", playlistService->getCurrentTrackId() );
+		playlistService->refreshEverythingPlaylist();
+		g_print( "Track ID after refresh: %d\n", playlistService->getCurrentTrackId() );
+
+		delete playlistService;
+		delete daoFactory;
 	} catch (std::exception* ex ) {
 		g_error( ex->what() );
 	}
 
-	delete playlistService;
-	delete daoFactory;
 }
 
 void actionDbTest(void) {
