@@ -33,8 +33,8 @@ public:
 	void cueArtistById( long artist_id );
 	void cueAlbumShuffledById( long album_id );
 	void cueAlbumOrderedById( long album_id );
-
 	void cueCustomPlaylist( Playlist* playlist );
+	void exitMode();
 
 	void createNewEverythingPlaylist();
 	void refreshEverythingPlaylist();
@@ -52,8 +52,6 @@ private:
 
 	Playlist* currentPlaylist;
 	Playlist::TrackIdsIterator currentPlaylistIter;
-
-	void exitMode();
 
 	PlaybackMode mode;
 };

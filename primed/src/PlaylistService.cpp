@@ -173,16 +173,22 @@ void PlaylistService::exitMode() {
 	switch( mode ) {
 		case EVERYTHING:
 			break;
+		case ARTIST:
+		case ALBUM_SHUFFLED:
+		case ALBUM_ORDERED:
+			if( currentPlaylist != NULL && currentPlaylist != everythingPlaylist ) {
+				daoFactory->getPlaylistDAO()->free( currentPlaylist );
+				currentPlaylist = NULL;
+			}
+			break;
 		case CUSTOM:
 			if( currentPlaylist != NULL && currentPlaylist != everythingPlaylist ) {
 				delete currentPlaylist;
 				currentPlaylist = NULL;
 			}
 			break;
-		default:
-			if( currentPlaylist != NULL && currentPlaylist != everythingPlaylist ) {
-				daoFactory->getPlaylistDAO()->free( currentPlaylist );
-				currentPlaylist = NULL;
-			}
 	}
+	currentPlaylist = everythingPlaylist;
+	currentPlaylistIter = everythingPlaylistIter;
+	mode = EVERYTHING;
 }
