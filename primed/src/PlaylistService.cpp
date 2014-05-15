@@ -6,6 +6,7 @@
  */
 
 #include <algorithm>
+#include <glib.h>
 #include "PlaylistService.hpp"
 #include "GeminiException.hpp"
 
@@ -51,13 +52,17 @@ long PlaylistService::getCurrentTrackId() {
 
 void PlaylistService::cueNextTrack() {
 	currentPlaylistIter++;
+	if( mode == EVERYTHING ) {
+		everythingPlaylistIter = currentPlaylistIter;
+	}
 	if( currentPlaylistIter == currentPlaylist->trackIds.end() ) {
 		if( mode == EVERYTHING ) {
 			currentPlaylistIter = currentPlaylist->trackIds.begin();
 			everythingPlaylistIter = currentPlaylistIter;
 		} else {
 			exitMode();
-			currentPlaylistIter = ++everythingPlaylistIter;
+			everythingPlaylistIter++;
+			currentPlaylistIter = everythingPlaylistIter;
 			currentPlaylist = everythingPlaylist;
 			mode = EVERYTHING;
 		}
@@ -72,6 +77,7 @@ void PlaylistService::cuePreviousTrack() {
 			currentPlaylistIter = everythingPlaylistIter;
 			daoFactory->getPlaylistDAO()->free( currentPlaylist );
 			currentPlaylist = everythingPlaylist;
+			mode = EVERYTHING;
 		}
 	}
 	currentPlaylistIter--;
@@ -81,6 +87,7 @@ void PlaylistService::cuePreviousTrack() {
 }
 
 void PlaylistService::cueArtistById( long artist_id ) {
+	long current_track_id = *currentPlaylistIter;
 	exitMode();
 	currentPlaylist = daoFactory->getTrackDAO()->getTrackIdsByArtist( artist_id );
 	if( currentPlaylist == NULL ) {
@@ -89,6 +96,11 @@ void PlaylistService::cueArtistById( long artist_id ) {
 		return;
 	}
 	std::random_shuffle( currentPlaylist->trackIds.begin(), currentPlaylist->trackIds.end() );
+	// Move current track to beginning
+	Playlist::TrackIdsIterator shuffledIter = std::find( currentPlaylist->trackIds.begin(), currentPlaylist->trackIds.end(), current_track_id );
+	if( shuffledIter != currentPlaylist->trackIds.end() ) {
+		std::swap( *currentPlaylist->trackIds.begin(), *shuffledIter );
+	}
 	currentPlaylistIter = currentPlaylist->trackIds.begin();
 	mode = ARTIST;
 }
