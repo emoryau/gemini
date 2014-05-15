@@ -53,6 +53,8 @@ private:
 	Playlist* currentPlaylist;
 	Playlist::TrackIdsIterator currentPlaylistIter;
 
+	void exitMode();
+
 	PlaybackMode mode;
 };
 

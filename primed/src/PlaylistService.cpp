@@ -41,16 +41,8 @@ PlaylistService::PlaylistService( DAOFactory* daoFactory ): daoFactory(daoFactor
 }
 
 PlaylistService::~PlaylistService() {
+	exitMode();
 	daoFactory->getPlaylistDAO()->free( everythingPlaylist );
-	switch( mode ) {
-		case EVERYTHING:
-			break;
-		case CUSTOM:
-			delete currentPlaylist;
-			break;
-		default:
-			daoFactory->getPlaylistDAO()->free( currentPlaylist );
-	}
 }
 
 long PlaylistService::getCurrentTrackId() {
@@ -64,13 +56,10 @@ void PlaylistService::cueNextTrack() {
 			currentPlaylistIter = currentPlaylist->trackIds.begin();
 			everythingPlaylistIter = currentPlaylistIter;
 		} else {
+			exitMode();
 			currentPlaylistIter = ++everythingPlaylistIter;
-			if( mode == CUSTOM ) {
-				delete currentPlaylist;
-			} else {
-				daoFactory->getPlaylistDAO()->free( currentPlaylist );
-			}
 			currentPlaylist = everythingPlaylist;
+			mode = EVERYTHING;
 		}
 	}
 }
@@ -99,6 +88,7 @@ void PlaylistService::cueCurrentArtist() {
 		// TODO: notify of error
 		return;
 	}
+	exitMode();
 	if( track->album->artist != NULL ) {
 		currentPlaylist = daoFactory->getTrackDAO()->getTrackIdsByArtist( track->album->artist->id );
 	} else {
@@ -117,6 +107,7 @@ void PlaylistService::cueCurrentAlbumShuffled() {
 		// TODO: notify of error
 		return;
 	}
+	exitMode();
 	currentPlaylist = daoFactory->getTrackDAO()->getTrackIdsByAlbum( track->album->id );
 	std::random_shuffle( currentPlaylist->trackIds.begin(), currentPlaylist->trackIds.end() );
 
@@ -137,12 +128,15 @@ void PlaylistService::cueCurrentAlbumOrdered() {
 		// TODO: notify of error
 		return;
 	}
+	exitMode();
 	currentPlaylist = daoFactory->getTrackDAO()->getTrackIdsByAlbum( track->album->id );
 	currentPlaylistIter = currentPlaylist->trackIds.begin();
 	mode = ALBUM_ORDERED;
+	daoFactory->getTrackDAO()->free( track );
 }
 
 void PlaylistService::cueCustomPlaylist( Playlist* playlist ) {
+	exitMode();
 	currentPlaylist = new Playlist( *playlist );
 	currentPlaylistIter = currentPlaylist->trackIds.begin();
 	mode = CUSTOM;
@@ -161,4 +155,22 @@ void PlaylistService::refreshEverythingPlaylist() {
 		THROW_GEMINI_EXCEPTION( "Trying to refresh with null everything playlist" );
 	}
 	THROW_GEMINI_EXCEPTION( "PlaylistService::refreshEverythingPlaylist() unimplemented" );
+}
+
+void PlaylistService::exitMode() {
+	switch( mode ) {
+		case EVERYTHING:
+			break;
+		case CUSTOM:
+			if( currentPlaylist != NULL && currentPlaylist != everythingPlaylist ) {
+				delete currentPlaylist;
+				currentPlaylist = NULL;
+			}
+			break;
+		default:
+			if( currentPlaylist != NULL && currentPlaylist != everythingPlaylist ) {
+				daoFactory->getPlaylistDAO()->free( currentPlaylist );
+				currentPlaylist = NULL;
+			}
+	}
 }
