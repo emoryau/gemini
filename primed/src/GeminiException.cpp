@@ -10,9 +10,9 @@
 #include "GeminiException.hpp"
 
 
-GeminiException::GeminiException( const std::string& arg, const char* file, int line ) throw() : std::runtime_error(arg) {
+GeminiException::GeminiException( const std::string& arg, const char* func, const char* file, int line ) throw() : std::runtime_error(arg) {
 	std::ostringstream o;
-	o << file << ":" << line << ": " << arg;
+	o << func << " " << file << ":" << line << ": " << arg;
 	cause = o.str();
 }
 

@@ -14,7 +14,7 @@
 
 class GeminiException: public std::runtime_error {
 public:
-	GeminiException( const std::string &arg, const char *file, int line ) throw();
+	GeminiException( const std::string &arg, const char* func, const char *file, int line ) throw();
 	virtual ~GeminiException() throw();
 	virtual const char* what() const throw();
 
@@ -22,7 +22,7 @@ private:
 	std::string cause;
 };
 
-#define THROW_GEMINI_EXCEPTION(s) throw new GeminiException( s, __FILE__, __LINE__ )
+#define THROW_GEMINI_EXCEPTION(s) throw new GeminiException( s, __PRETTY_FUNCTION__, __FILE__, __LINE__ )
 
 
 #endif /* GEMINIEXCEPTION_HPP_ */
