@@ -5,9 +5,10 @@
  *      Author: emory.au
  */
 
-#include "ArtistDAOSqlite3Impl.hpp"
 #include <string>
 #include <glib.h>
+#include "ArtistDAOSqlite3Impl.hpp"
+#include "GeminiException.hpp"
 
 ArtistDAOSqlite3Impl::ArtistDAOSqlite3Impl( sqlite3* db ) {
 	this->db = db;
@@ -31,7 +32,7 @@ void ArtistDAOSqlite3Impl::ensureDBSchema() {
 
 	rc = sqlite3_exec( db, sql.c_str(), NULL, 0, &zErrMsg );
 	if( rc != SQLITE_OK ) {
-		throw new Sqlite3Exception( zErrMsg );
+		THROW_GEMINI_EXCEPTION( zErrMsg );
 		sqlite3_free( zErrMsg );
 	}
 }

@@ -6,12 +6,13 @@
  */
 
 #include "BaseSqlite3Impl.hpp"
+#include "GeminiException.hpp"
 #include <sstream>
 
 
 void BaseSqlite3Impl::checkDb() {
 	if( db == NULL ) {
-		throw new Sqlite3Exception( "DB not initialized" );
+		THROW_GEMINI_EXCEPTION( "DB not initialized" );
 	}}
 
 sqlite3_stmt* BaseSqlite3Impl::prepare( const char* sql ) {
@@ -20,7 +21,7 @@ sqlite3_stmt* BaseSqlite3Impl::prepare( const char* sql ) {
 
 	rc = sqlite3_prepare_v2( db, sql, -1, &pStmt, NULL);
 	if( rc != SQLITE_OK ) {
-		throw new Sqlite3Exception( sqlite3_errmsg( db ) );
+		THROW_GEMINI_EXCEPTION( sqlite3_errmsg( db ) );
 	}
 	return pStmt;
 }
@@ -31,7 +32,7 @@ void BaseSqlite3Impl::bindInt( sqlite3_stmt* pStmt, const char* field, int i ) {
 			sqlite3_bind_parameter_index( pStmt, field ),
 			i);
 	if( rc != SQLITE_OK ) {
-		throw new Sqlite3Exception( sqlite3_errstr(rc) );
+		THROW_GEMINI_EXCEPTION( sqlite3_errstr(rc) );
 	}
 }
 
@@ -41,7 +42,7 @@ void BaseSqlite3Impl::bindLong( sqlite3_stmt* pStmt, const char* field, const lo
 			sqlite3_bind_parameter_index( pStmt, field ),
 			l);
 	if( rc != SQLITE_OK ) {
-		throw new Sqlite3Exception( sqlite3_errstr(rc) );
+		THROW_GEMINI_EXCEPTION( sqlite3_errstr(rc) );
 	}
 }
 
@@ -51,7 +52,7 @@ void BaseSqlite3Impl::bindDouble( sqlite3_stmt* pStmt, const char* field, const 
 			sqlite3_bind_parameter_index( pStmt, field ),
 			d);
 	if( rc != SQLITE_OK ) {
-		throw new Sqlite3Exception( sqlite3_errstr(rc) );
+		THROW_GEMINI_EXCEPTION( sqlite3_errstr(rc) );
 	}
 }
 
@@ -63,7 +64,7 @@ void BaseSqlite3Impl::bindText( sqlite3_stmt* pStmt, const char* field, const ch
 			-1,
 			SQLITE_STATIC );
 	if( rc != SQLITE_OK ) {
-		throw new Sqlite3Exception( sqlite3_errstr(rc) );
+		THROW_GEMINI_EXCEPTION( sqlite3_errstr(rc) );
 	}
 }
 
@@ -71,7 +72,7 @@ int BaseSqlite3Impl::step( sqlite3_stmt* pStmt ) {
 	int rc;
 	rc = sqlite3_step( pStmt );
 	if( rc != SQLITE_DONE && rc != SQLITE_ROW ) {
-		throw new Sqlite3Exception( sqlite3_errmsg( db ) );
+		THROW_GEMINI_EXCEPTION( sqlite3_errmsg( db ) );
 	}
 	return rc;
 }
@@ -80,7 +81,7 @@ void BaseSqlite3Impl::finalize( sqlite3_stmt* pStmt ) {
 	int rc;
 	rc = sqlite3_finalize( pStmt );
 	if( rc != SQLITE_OK ) {
-		throw new Sqlite3Exception( sqlite3_errmsg( db ) );
+		THROW_GEMINI_EXCEPTION( sqlite3_errmsg( db ) );
 	}
 }
 
@@ -129,6 +130,6 @@ void BaseSqlite3Impl::reset( sqlite3_stmt* pStmt ) {
 	int rc;
 	rc = sqlite3_reset( pStmt );
 	if( rc != SQLITE_OK ) {
-		throw new Sqlite3Exception( sqlite3_errmsg( db ) );
+		THROW_GEMINI_EXCEPTION( sqlite3_errmsg( db ) );
 	}
 }

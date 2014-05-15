@@ -5,8 +5,9 @@
  *      Author: emoryau
  */
 
-#include "TrackDAOSqlite3Impl.hpp"
 #include <glib.h>
+#include "TrackDAOSqlite3Impl.hpp"
+#include "GeminiException.hpp"
 
 TrackDAOSqlite3Impl::TrackDAOSqlite3Impl( sqlite3* db, ArtistDAO* artistDAO, AlbumDAO* albumDAO ) {
 	this->db = db;
@@ -214,7 +215,7 @@ void TrackDAOSqlite3Impl::ensureDBSchema() {
 
 	rc = sqlite3_exec( db, sql.c_str(), NULL, 0, &zErrMsg );
 	if( rc != SQLITE_OK ) {
-		throw new Sqlite3Exception( zErrMsg );
+		THROW_GEMINI_EXCEPTION( zErrMsg );
 		sqlite3_free( zErrMsg );
 	}
 }

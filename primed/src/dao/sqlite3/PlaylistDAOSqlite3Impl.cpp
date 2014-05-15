@@ -5,11 +5,11 @@
  *      Author: emory.au
  */
 
-#include "PlaylistDAOSqlite3Impl.hpp"
-
 #include <glib.h>
 #include <string>
 #include <sstream>
+#include "PlaylistDAOSqlite3Impl.hpp"
+#include "GeminiException.hpp"
 
 PlaylistDAOSqlite3Impl::~PlaylistDAOSqlite3Impl() {
 	// TODO Auto-generated destructor stub
@@ -41,7 +41,7 @@ void PlaylistDAOSqlite3Impl::ensureDBSchema() {
 
 	rc = sqlite3_exec( db, sql.c_str(), NULL, 0, &zErrMsg );
 	if( rc != SQLITE_OK ) {
-		throw new Sqlite3Exception( zErrMsg );
+		THROW_GEMINI_EXCEPTION( zErrMsg );
 		sqlite3_free( zErrMsg );
 	}
 }

@@ -44,16 +44,4 @@ protected:
 };
 
 
-class Sqlite3Exception: public std::exception {
-public:
-	Sqlite3Exception( const char* what ) throw() { cause.assign( what );};
-	virtual ~Sqlite3Exception() throw() { };
-
-	virtual const char* what() const throw() { return cause.c_str(); };
-
-private:
-	std::string cause;
-};
-
-
 #endif /* BASESQLITE3IMPL_HPP_ */

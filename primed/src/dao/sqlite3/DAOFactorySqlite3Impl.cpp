@@ -10,6 +10,8 @@
 #include "AlbumDAOSqlite3Impl.hpp"
 #include "TrackDAOSqlite3Impl.hpp"
 #include "PlaylistDAOSqlite3Impl.hpp"
+#include "GeminiException.hpp"
+
 
 DAOFactorySqlite3Impl::DAOFactorySqlite3Impl(void) {
 	db = NULL;
@@ -50,7 +52,7 @@ void DAOFactorySqlite3Impl::setDBFile( const char* filename ) {
 		sqlite3_close( db );
 		db = NULL;
 		// Throw DB exception
-		throw new Sqlite3Exception( "Error opening db" );
+		THROW_GEMINI_EXCEPTION( "Error opening db" );
 	}
 
 	artistDAO = new ArtistDAOSqlite3Impl( db );
