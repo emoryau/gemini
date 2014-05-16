@@ -22,6 +22,8 @@ public:
 private:
 	static GOptionEntry options[];
 	static gboolean test_playlist_service;
+
+	void testPlaylistService();
 };
 
 #endif /* TESTCONTROLLER_HPP_ */
