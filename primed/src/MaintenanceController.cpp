@@ -59,11 +59,11 @@ void MaintenanceController::run( bool& allow_daemon ) {
 void MaintenanceController::scanDirectory() {
 	Filesystem directory_crawler( scan_directory );
 	TagExtractor extractor;
-	MetadataStore store;
+	MetadataService metadata_service;
 
 	g_print( "Scanning %s\n", scan_directory );
 
-	store.setDAOFactory( dao_factory );
+	metadata_service.setDAOFactory( dao_factory );
 
 	for (Filesystem::iterator it = directory_crawler.begin(); it != directory_crawler.end(); ++it) {
 		// Parse file
@@ -73,7 +73,7 @@ void MaintenanceController::scanDirectory() {
 			continue;
 
 		extractor.readTags( filename.c_str() );
-		store.addExtractedTrack( extractor );
+		metadata_service.addExtractedTrack( extractor );
 	}
 }
 

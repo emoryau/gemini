@@ -8,14 +8,14 @@
 #include "MetadataStore.hpp"
 #include <glib.h>
 
-MetadataStore::MetadataStore( DAOFactory* daoFactory ) {
+MetadataService::MetadataService( DAOFactory* daoFactory ) {
 	this->daoFactory = daoFactory;
 }
 
-MetadataStore::~MetadataStore() {
+MetadataService::~MetadataService() {
 }
 
-void MetadataStore::addExtractedTrack( TagExtractor& te ) {
+void MetadataService::addExtractedTrack( TagExtractor& te ) {
 	Track* track = new Track( te );
 	Album* album = new Album( te );
 	Artist* artist = new Artist( te );

@@ -15,11 +15,11 @@
 #include "Album.hpp"
 #include "dao/DAOFactory.hpp"
 
-class MetadataStore {
+class MetadataService {
 public:
-	MetadataStore(): daoFactory( NULL ) { };
-	MetadataStore( DAOFactory* daoFactory );
-	virtual ~MetadataStore();
+	MetadataService(): daoFactory( NULL ) { };
+	MetadataService( DAOFactory* daoFactory );
+	virtual ~MetadataService();
 
 	void setDAOFactory( DAOFactory* daoFactory) { this->daoFactory = daoFactory; };
 	void addExtractedTrack( TagExtractor& te );
