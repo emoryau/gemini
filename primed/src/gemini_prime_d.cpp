@@ -17,18 +17,20 @@
 #include "Filesystem.hpp"
 #include "TagExtractor.hpp"
 #include "MetadataStore.hpp"
-#include "dao/sqlite3/DAOFactorySqlite3Impl.hpp"
 #include "PlaylistService.hpp"
+#include "dao/DAOFactory.hpp"
 
 static const char* extension_blacklist[] = { ".jpg", ".cue", ".db", ".m3u", ".ini", ".sfv", ".pdf", ".log", ".txt", ".png", NULL };
-static const gchar* scan_filename = "/home/emoryau/testmusic";
-static const gchar* database_filename = "/home/emoryau/test.sqlite";
+static const gchar* scan_filename_default = "/home/emoryau/testmusic";
+static const gchar* database_URI_default = "sqlite3:///home/emoryau/test.sqlite";
+static gchar* database_URI = NULL;
+static gchar* scan_filename = NULL;
 static gchar** action_commands = NULL;
 
 static GOptionEntry command_line_entries[] =
 {
-		{ "scan", 's', 0, G_OPTION_ARG_FILENAME, &scan_filename, "Scan directory M for music, then exit", "M" },
-		{ "database", 'd', 0, G_OPTION_ARG_FILENAME, &database_filename, "Set name of database to D", "D" },
+		{ "scan", 's', 0, G_OPTION_ARG_FILENAME, scan_filename, "Scan directory M for music, then exit", "M" },
+		{ "database", 'd', 0, G_OPTION_ARG_FILENAME, &database_URI, "Set name of database to D", "D" },
 		{ G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_STRING_ARRAY, &action_commands, "Action", NULL },
 		{ NULL }
 };
@@ -69,13 +71,10 @@ void actionScan( void ) {
 	Filesystem directory_crawler( scan_filename );
 	TagExtractor extractor;
 	MetadataStore store;
-	DAOFactorySqlite3Impl* daoFactory;
+	DAOFactory* daoFactory = DAOFactory::CreateDAOFactoryFromURI( database_URI );
 
 	g_print( "Scanning %s\n", scan_filename );
 
-	// Create some DAO's to talk to the db
-	daoFactory = new DAOFactorySqlite3Impl();
-	daoFactory->setDBFile( database_filename );
 	store.setDAOFactory( daoFactory );
 
 	for (Filesystem::iterator it = directory_crawler.begin(); it != directory_crawler.end(); ++it) {
@@ -92,8 +91,7 @@ void actionScan( void ) {
 
 void actionPlaylist(void) {
 	try {
-		DAOFactorySqlite3Impl* daoFactory = new DAOFactorySqlite3Impl();
-		daoFactory->setDBFile( database_filename );
+		DAOFactory* daoFactory = DAOFactory::CreateDAOFactoryFromURI( database_URI );
 		PlaylistService* playlistService = new PlaylistService( daoFactory );
 
 		playlistService->refreshEverythingPlaylist();
@@ -107,8 +105,8 @@ void actionPlaylist(void) {
 
 void actionTestDb(void) {
 	try {
-			DAOFactorySqlite3Impl* daoFactory = new DAOFactorySqlite3Impl();
-			daoFactory->setDBFile( database_filename );
+			DAOFactory* daoFactory = DAOFactory::CreateDAOFactoryFromURI( database_URI );
+			daoFactory->setDBFile( database_URI );
 			TrackDAO* trackDAO = daoFactory->getTrackDAO();
 			Track criterion;
 			criterion.id = 120;
@@ -134,8 +132,7 @@ void printCurrentTrackFromPlaylistService( PlaylistService* playlistService, DAO
 
 void actionPlaylistServiceTest(void) {
 	try {
-		DAOFactorySqlite3Impl* daoFactory = new DAOFactorySqlite3Impl();
-		daoFactory->setDBFile( database_filename );
+		DAOFactory* daoFactory = DAOFactory::CreateDAOFactoryFromURI( database_URI );
 		PlaylistService* playlistService = new PlaylistService( daoFactory );
 		Track* criterion;
 		Track* track = NULL;
@@ -301,7 +298,13 @@ int main( int argc, char** argv ) {
 		exit( 1 );
 	}
 
-	g_print( "Database filename: %s\n", database_filename );
+	if( database_URI == NULL ) {
+		database_URI = g_strdup( database_URI_default );
+	}
+	if( scan_filename == NULL ) {
+		scan_filename = g_strdup( scan_filename_default );
+	}
+	g_print( "Database filename: %s\n", database_URI );
 
 	for( std::list<ActionRow*>::iterator action = requested_actions.begin(); action != requested_actions.end(); action++ ) {
 		g_print( "Starting requested_actions: %s\n", (*action)->command_text );
@@ -310,6 +313,9 @@ int main( int argc, char** argv ) {
 		}
 		g_print( "Finished %s\n", (*action)->command_text );
 	}
+
+	g_free( database_URI );
+	g_free( scan_filename );
 
 	return 0;
 }

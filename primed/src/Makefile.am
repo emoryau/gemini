@@ -1,7 +1,7 @@
 bin_PROGRAMS=gemini_prime_d
-AM_CPPFLAGS=$(DEPS_CFLAGS) $(SQLITE_CFLAGS)
-SUBDIRS = libmagic dao/sqlite3
-gemini_prime_d_LDADD=libmagic/libmagic.la dao/sqlite3/libdaosqlite3.la $(DEPS_LIBS) $(SQLITE_LIBS) 
+AM_CPPFLAGS=$(DEPS_CFLAGS)
+SUBDIRS = dao libmagic
+gemini_prime_d_LDADD=dao/libdao.la libmagic/libmagic.la $(DEPS_LIBS)
 gemini_prime_d_SOURCES= \
 	Filesystem.cpp \
 	TagExtractor.cpp \

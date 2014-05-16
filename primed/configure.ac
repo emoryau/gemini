@@ -23,5 +23,5 @@ PKG_CHECK_MODULES(SQLITE, [sqlite3 >= 3.0])
 # Checks for library functions.
 LT_INIT
 
-AC_CONFIG_FILES([Makefile src/Makefile src/libmagic/Makefile src/dao/sqlite3/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile src/libmagic/Makefile src/dao/Makefile src/dao/sqlite3/Makefile])
 AC_OUTPUT

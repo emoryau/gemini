@@ -8,6 +8,7 @@
 #ifndef DAOFACTORY_HPP_
 #define DAOFACTORY_HPP_
 
+#include <string>
 #include "TrackDAO.hpp"
 #include "ArtistDAO.hpp"
 #include "AlbumDAO.hpp"
@@ -16,6 +17,8 @@
 
 class DAOFactory {
 public:
+	static DAOFactory* CreateDAOFactoryFromURI( const char* db_uri );
+
 	virtual ~DAOFactory() = 0;
 
 	virtual void setDBFile( const char* filename ) = 0;
