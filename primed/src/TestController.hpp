@@ -17,7 +17,7 @@ public:
 	virtual ~TestController();
 
 	virtual GOptionGroup* getOptionGroup();
-	virtual void run();
+	virtual void run( bool& allow_daemon );
 
 private:
 	static GOptionEntry options[];

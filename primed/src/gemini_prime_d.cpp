@@ -68,9 +68,9 @@ int main( int argc, char** argv ) {
 		(*controller_iter)->setDAOFactory( dao_factory );
 	}
 
-
+	bool allow_daemon = true;
 	for( ControllerList::iterator controller_iter = controllers.begin(); controller_iter != controllers.end(); controller_iter++ ) {
-		(*controller_iter)->run();
+		(*controller_iter)->run( allow_daemon );
 	}
 
 	delete dao_factory;

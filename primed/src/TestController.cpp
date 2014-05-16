@@ -38,12 +38,14 @@ GOptionGroup* TestController::getOptionGroup() {
 	return group;
 }
 
-void TestController::run() {
+void TestController::run( bool& allow_daemon ) {
 	if( test_database ) {
 		testDatabase();
+		allow_daemon = false;
 	}
 	if( test_playlist_service ) {
 		testPlaylistService();
+		allow_daemon = false;
 	}
 }
 

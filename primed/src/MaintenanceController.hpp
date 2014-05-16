@@ -19,7 +19,7 @@ public:
 	MaintenanceController();
 
 	virtual GOptionGroup* getOptionGroup();
-	virtual void run();
+	virtual void run( bool& allow_daemon );
 
 private:
 	static GOptionEntry options[];

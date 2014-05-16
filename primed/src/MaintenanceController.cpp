@@ -45,12 +45,14 @@ GOptionGroup* MaintenanceController::getOptionGroup() {
 	return group;
 }
 
-void MaintenanceController::run() {
+void MaintenanceController::run( bool& allow_daemon ) {
 	if( scan_directory != NULL ) {
 		scanDirectory();
+		allow_daemon = false;
 	}
 	if( update_playlists ) {
 		updatePlaylists();
+		allow_daemon = false;
 	}
 }
 

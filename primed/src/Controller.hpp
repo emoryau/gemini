@@ -20,7 +20,7 @@ public:
 	void setDAOFactory( DAOFactory* dao_factory ) { this->dao_factory = dao_factory; };
 
 	virtual GOptionGroup* getOptionGroup() = 0;
-	virtual void run() = 0;
+	virtual void run(bool& allow_daemon) = 0;
 
 protected:
 	DAOFactory* dao_factory;
