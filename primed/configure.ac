@@ -13,7 +13,7 @@ AC_PROG_CXX
 AC_PROG_CC
 
 # Checks for libraries.
-PKG_CHECK_MODULES(DEPS, [gstreamer-1.0 >= 1.0])
+PKG_CHECK_MODULES(GSTREAMER, [gstreamer-1.0 >= 1.0])
 PKG_CHECK_MODULES(SQLITE, [sqlite3 >= 3.0])
 
 # Checks for header files.

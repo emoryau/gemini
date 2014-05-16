@@ -1,7 +1,7 @@
 bin_PROGRAMS=gemini_prime_d
-AM_CPPFLAGS=$(DEPS_CFLAGS)
+AM_CPPFLAGS=$(GSTREAMER_CFLAGS)
 SUBDIRS = dao libmagic
-gemini_prime_d_LDADD=dao/libdao.la libmagic/libmagic.la $(DEPS_LIBS)
+gemini_prime_d_LDADD=dao/libdao.la libmagic/libmagic.la $(GSTREAMER_LIBS)
 gemini_prime_d_SOURCES= \
 	Filesystem.cpp \
 	TagExtractor.cpp \
