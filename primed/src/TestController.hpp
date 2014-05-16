@@ -22,7 +22,9 @@ public:
 private:
 	static GOptionEntry options[];
 	static gboolean test_playlist_service;
+	static gboolean test_database;
 
+	void testDatabase();
 	void testPlaylistService();
 };
 
