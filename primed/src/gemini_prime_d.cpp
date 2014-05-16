@@ -19,6 +19,7 @@
 #include "MetadataStore.hpp"
 #include "PlaylistService.hpp"
 #include "dao/DAOFactory.hpp"
+#include "TestController.hpp"
 
 static const char* extension_blacklist[] = { ".jpg", ".cue", ".db", ".m3u", ".ini", ".sfv", ".pdf", ".log", ".txt", ".png", NULL };
 static const gchar* scan_filename_default = "/home/emoryau/testmusic";
@@ -26,6 +27,8 @@ static const gchar* database_URI_default = "sqlite3:///home/emoryau/test.sqlite"
 static gchar* database_URI = NULL;
 static gchar* scan_filename = NULL;
 static gchar** action_commands = NULL;
+
+static std::list<Controller*> controllers;
 
 static GOptionEntry command_line_entries[] =
 {
@@ -256,6 +259,11 @@ std::list<ActionRow*> parseCommandLine( int argc, char** argv ) {
 	context = g_option_context_new( "ACTION_1 ACTION_2 ACTION_N" );
 	g_option_context_set_summary( context, summary_stream.str().c_str() );
 	g_option_context_add_main_entries( context, command_line_entries, NULL );
+
+	for( std::list<Controller*>::iterator controller_iter = controllers.begin(); controller_iter != controllers.end(); controller_iter++ ) {
+		g_option_context_add_group( context, (*controller_iter)->getOptionGroup() );
+	}
+
 	if( !g_option_context_parse( context, &argc, &argv, &error ) ) {
 		g_print( "option parsing failed: %s\n", error->message );
 		exit( 1 );
@@ -291,6 +299,7 @@ std::list<ActionRow*> parseCommandLine( int argc, char** argv ) {
 int main( int argc, char** argv ) {
 	gst_init( &argc, &argv );
 
+	controllers.push_back( new TestController );
 	std::list<ActionRow*> requested_actions = parseCommandLine( argc, argv );
 
 	if( requested_actions.size() <= 0 ) {

@@ -7,6 +7,9 @@
 
 #include "Controller.hpp"
 
+Controller::Controller(): dao_factory( NULL ) {
+}
+
 Controller::~Controller() {
 	// TODO Auto-generated destructor stub
 }

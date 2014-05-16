@@ -12,4 +12,5 @@ gemini_prime_d_SOURCES= \
 	PlaylistService.cpp \
 	GeminiException.cpp \
 	Controller.cpp \
+	TestController.cpp \
 	gemini_prime_d.cpp
