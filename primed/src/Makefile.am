@@ -13,4 +13,5 @@ gemini_prime_d_SOURCES= \
 	GeminiException.cpp \
 	Controller.cpp \
 	TestController.cpp \
+	MaintenanceController.cpp \
 	gemini_prime_d.cpp

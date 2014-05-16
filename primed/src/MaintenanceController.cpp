@@ -1,0 +1,99 @@
+/*
+ * MaintenenceController.cpp
+ *
+ *  Created on: May 16, 2014
+ *      Author: emory.au
+ */
+
+#include <glib.h>
+#include <exception>
+
+#include "MaintenanceController.hpp"
+#include "TagExtractor.hpp"
+#include "MetadataStore.hpp"
+#include "Filesystem.hpp"
+#include "PlaylistService.hpp"
+
+gchar* MaintenanceController::scan_directory = NULL;
+gboolean MaintenanceController::update_playlists = FALSE;
+
+GOptionEntry MaintenanceController::options[] = {
+		{ "scan-directory", 's', 0, G_OPTION_ARG_FILENAME, &scan_directory, "Set music scan directory M", "M" },
+		{ "playlist-update", 'p', 0, G_OPTION_ARG_NONE, &update_playlists, "Update playlist data", NULL },
+		{ NULL }
+};
+
+const char* MaintenanceController::extension_blacklist[] = { ".jpg", ".cue", ".db", ".m3u", ".ini", ".sfv", ".pdf", ".log", ".txt", ".png", NULL };
+
+MaintenanceController::~MaintenanceController() {
+	// TODO Auto-generated destructor stub
+}
+
+MaintenanceController::MaintenanceController(): Controller() {
+	// TODO Auto-generated constructor stub
+
+}
+
+GOptionGroup* MaintenanceController::getOptionGroup() {
+	GOptionGroup* group = g_option_group_new(
+			"maint",
+			"Options for the Maintenance Controller",
+			"The Test Controller runs tests on various portions of the Gemini codebase",
+			NULL,
+			NULL );
+	g_option_group_add_entries( group, options );
+	return group;
+}
+
+void MaintenanceController::run() {
+	if( scan_directory != NULL ) {
+		scanDirectory();
+	}
+	if( update_playlists ) {
+		updatePlaylists();
+	}
+}
+
+void MaintenanceController::scanDirectory() {
+	Filesystem directory_crawler( scan_directory );
+	TagExtractor extractor;
+	MetadataStore store;
+
+	g_print( "Scanning %s\n", scan_directory );
+
+	store.setDAOFactory( dao_factory );
+
+	for (Filesystem::iterator it = directory_crawler.begin(); it != directory_crawler.end(); ++it) {
+		// Parse file
+		std::string filename = *it;
+
+		if( isInBlacklist( filename ) )
+			continue;
+
+		extractor.readTags( filename.c_str() );
+		store.addExtractedTrack( extractor );
+	}
+}
+
+void MaintenanceController::updatePlaylists() {
+	try {
+		PlaylistService* playlistService = new PlaylistService( dao_factory );
+
+		playlistService->refreshEverythingPlaylist();
+
+		delete playlistService;
+	} catch (std::exception* ex ) {
+		g_error( ex->what() );
+	}
+}
+
+bool MaintenanceController::isInBlacklist( const std::string& subject ) {
+	const char** extension_comparator = extension_blacklist;
+	while( *extension_comparator != NULL ) {
+		if( subject.rfind( *extension_comparator ) != std::string::npos ) {
+			return true;
+		}
+		extension_comparator++;
+	}
+	return false;
+}
