@@ -18,7 +18,7 @@ gchar* MaintenanceController::scan_directory = NULL;
 gboolean MaintenanceController::update_playlists = FALSE;
 
 GOptionEntry MaintenanceController::options[] = {
-		{ "scan-directory", 's', 0, G_OPTION_ARG_FILENAME, &scan_directory, "Set music scan directory M", "M" },
+		{ "scan-directory", 's', 0, G_OPTION_ARG_FILENAME, &scan_directory, "Scan directory M for compatible music", "M" },
 		{ "playlist-update", 'p', 0, G_OPTION_ARG_NONE, &update_playlists, "Update playlist data", NULL },
 		{ NULL }
 };

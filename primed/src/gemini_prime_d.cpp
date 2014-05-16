@@ -22,7 +22,7 @@ static ControllerList controllers;
 
 static GOptionEntry command_line_entries[] =
 {
-		{ "database_uri", 'd', 0, G_OPTION_ARG_FILENAME, &database_URI, "Set name of database to D", "D" },
+		{ "database-uri", 'd', 0, G_OPTION_ARG_FILENAME, &database_URI, "Set name of database to D", "D" },
 		{ NULL }
 };
 
