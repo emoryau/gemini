@@ -29,8 +29,8 @@ static gchar** action_commands = NULL;
 
 static GOptionEntry command_line_entries[] =
 {
-		{ "scan", 's', 0, G_OPTION_ARG_FILENAME, scan_filename, "Scan directory M for music, then exit", "M" },
-		{ "database", 'd', 0, G_OPTION_ARG_FILENAME, &database_URI, "Set name of database to D", "D" },
+		{ "scan_filename", 's', 0, G_OPTION_ARG_FILENAME, scan_filename, "Set music scan directory M", "M" },
+		{ "database_uri", 'd', 0, G_OPTION_ARG_FILENAME, &database_URI, "Set name of database to D", "D" },
 		{ G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_STRING_ARRAY, &action_commands, "Action", NULL },
 		{ NULL }
 };

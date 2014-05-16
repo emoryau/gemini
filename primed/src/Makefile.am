@@ -11,4 +11,5 @@ gemini_prime_d_SOURCES= \
 	Artist.cpp \
 	PlaylistService.cpp \
 	GeminiException.cpp \
+	Controller.cpp \
 	gemini_prime_d.cpp
