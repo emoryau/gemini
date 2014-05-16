@@ -14,4 +14,5 @@ gemini_prime_d_SOURCES= \
 	Controller.cpp \
 	TestController.cpp \
 	MaintenanceController.cpp \
+	PlaybackController.cpp \
 	gemini_prime_d.cpp

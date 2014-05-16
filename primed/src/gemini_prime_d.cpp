@@ -13,6 +13,7 @@
 #include "dao/DAOFactory.hpp"
 #include "TestController.hpp"
 #include "MaintenanceController.hpp"
+#include "PlaybackController.hpp"
 
 static const gchar* database_URI_default = "sqlite3:///home/emoryau/test.sqlite";
 static gchar* database_URI = NULL;
@@ -51,6 +52,8 @@ int main( int argc, char** argv ) {
 
 	controllers.push_back( new TestController );
 	controllers.push_back( new MaintenanceController );
+	// Important for playback to be last to ensure daemon only runs when no other actions are specified
+	controllers.push_back( new PlaybackController );
 
 	parseCommandLine( argc, argv );
 
