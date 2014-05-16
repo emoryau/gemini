@@ -10,6 +10,7 @@
 #include "AlbumDAOSqlite3Impl.hpp"
 #include "TrackDAOSqlite3Impl.hpp"
 #include "PlaylistDAOSqlite3Impl.hpp"
+#include "SettingsDAOSqlite3Impl.hpp"
 #include "GeminiException.hpp"
 
 
@@ -19,6 +20,7 @@ DAOFactorySqlite3Impl::DAOFactorySqlite3Impl(void) {
 	artistDAO = NULL;
 	albumDAO = NULL;
 	playlistDAO = NULL;
+	settingsDAO = NULL;
 }
 
 DAOFactorySqlite3Impl::~DAOFactorySqlite3Impl() {
@@ -37,6 +39,10 @@ DAOFactorySqlite3Impl::~DAOFactorySqlite3Impl() {
 	if( playlistDAO != NULL ) {
 		delete playlistDAO;
 		playlistDAO = NULL;
+	}
+	if( settingsDAO != NULL ) {
+		delete settingsDAO;
+		settingsDAO = NULL;
 	}
 	if( db != NULL ) {
 		sqlite3_close( db );
@@ -63,4 +69,6 @@ void DAOFactorySqlite3Impl::setDBFile( const char* filename ) {
 	trackDAO->ensureDBSchema();
 	playlistDAO = new PlaylistDAOSqlite3Impl( db );
 	playlistDAO->ensureDBSchema();
+	settingsDAO = new SettingsDAOSqlite3Impl( db );
+	settingsDAO->ensureDBSchema();
 }

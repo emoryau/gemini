@@ -12,6 +12,7 @@
 #include "ArtistDAO.hpp"
 #include "AlbumDAO.hpp"
 #include "PlaylistDAO.hpp"
+#include "SettingsDAO.hpp"
 
 class DAOFactory {
 public:
@@ -22,6 +23,7 @@ public:
 	virtual ArtistDAO* getArtistDAO() = 0;
 	virtual AlbumDAO* getAlbumDAO() = 0;
 	virtual PlaylistDAO* getPlaylistDAO() = 0;
+	virtual SettingsDAO* getSettingsDAO() = 0;
 };
 
 inline DAOFactory::~DAOFactory() { };

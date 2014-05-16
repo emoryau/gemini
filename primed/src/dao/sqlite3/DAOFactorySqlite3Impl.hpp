@@ -8,11 +8,12 @@
 #ifndef DAOFACTORYSQLITE3IMPL_HPP_
 #define DAOFACTORYSQLITE3IMPL_HPP_
 
+#include <sqlite3.h>
 #include "dao/DAOFactory.hpp"
 #include "dao/TrackDAO.hpp"
 #include "dao/ArtistDAO.hpp"
 #include "dao/AlbumDAO.hpp"
-#include <sqlite3.h>
+#include "dao/SettingsDAO.hpp"
 
 class DAOFactorySqlite3Impl: public DAOFactory {
 public:
@@ -24,6 +25,7 @@ public:
 	virtual ArtistDAO* getArtistDAO() { return artistDAO; };
 	virtual AlbumDAO* getAlbumDAO() { return albumDAO; };
 	virtual PlaylistDAO* getPlaylistDAO() { return playlistDAO; };
+	virtual SettingsDAO* getSettingsDAO() { return settingsDAO; };
 
 private:
 	sqlite3* db;
@@ -31,6 +33,7 @@ private:
 	ArtistDAO* artistDAO;
 	AlbumDAO* albumDAO;
 	PlaylistDAO* playlistDAO;
+	SettingsDAO* settingsDAO;
 };
 
 #endif /* DAOFACTORYSQLITE3IMPL_HPP_ */
