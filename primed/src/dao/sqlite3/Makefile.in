@@ -100,6 +100,7 @@ am_libdaosqlite3_la_OBJECTS = libdaosqlite3_la-BaseSqlite3Impl.lo \
 	libdaosqlite3_la-AlbumDAOSqlite3Impl.lo \
 	libdaosqlite3_la-TrackDAOSqlite3Impl.lo \
 	libdaosqlite3_la-PlaylistDAOSqlite3Impl.lo \
+	libdaosqlite3_la-SettingsDAOSqlite3Impl.lo \
 	libdaosqlite3_la-DAOFactorySqlite3Impl.lo
 libdaosqlite3_la_OBJECTS = $(am_libdaosqlite3_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -302,6 +303,7 @@ libdaosqlite3_la_SOURCES = \
 	AlbumDAOSqlite3Impl.cpp \
 	TrackDAOSqlite3Impl.cpp \
 	PlaylistDAOSqlite3Impl.cpp \
+	SettingsDAOSqlite3Impl.cpp \
 	DAOFactorySqlite3Impl.cpp 
 
 all: all-am
@@ -364,6 +366,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdaosqlite3_la-BaseSqlite3Impl.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdaosqlite3_la-DAOFactorySqlite3Impl.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdaosqlite3_la-PlaylistDAOSqlite3Impl.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdaosqlite3_la-SettingsDAOSqlite3Impl.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdaosqlite3_la-TrackDAOSqlite3Impl.Plo@am__quote@
 
 .cpp.o:
@@ -421,6 +424,13 @@ libdaosqlite3_la-PlaylistDAOSqlite3Impl.lo: PlaylistDAOSqlite3Impl.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='PlaylistDAOSqlite3Impl.cpp' object='libdaosqlite3_la-PlaylistDAOSqlite3Impl.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdaosqlite3_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libdaosqlite3_la-PlaylistDAOSqlite3Impl.lo `test -f 'PlaylistDAOSqlite3Impl.cpp' || echo '$(srcdir)/'`PlaylistDAOSqlite3Impl.cpp
+
+libdaosqlite3_la-SettingsDAOSqlite3Impl.lo: SettingsDAOSqlite3Impl.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdaosqlite3_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libdaosqlite3_la-SettingsDAOSqlite3Impl.lo -MD -MP -MF $(DEPDIR)/libdaosqlite3_la-SettingsDAOSqlite3Impl.Tpo -c -o libdaosqlite3_la-SettingsDAOSqlite3Impl.lo `test -f 'SettingsDAOSqlite3Impl.cpp' || echo '$(srcdir)/'`SettingsDAOSqlite3Impl.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdaosqlite3_la-SettingsDAOSqlite3Impl.Tpo $(DEPDIR)/libdaosqlite3_la-SettingsDAOSqlite3Impl.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='SettingsDAOSqlite3Impl.cpp' object='libdaosqlite3_la-SettingsDAOSqlite3Impl.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdaosqlite3_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libdaosqlite3_la-SettingsDAOSqlite3Impl.lo `test -f 'SettingsDAOSqlite3Impl.cpp' || echo '$(srcdir)/'`SettingsDAOSqlite3Impl.cpp
 
 libdaosqlite3_la-DAOFactorySqlite3Impl.lo: DAOFactorySqlite3Impl.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdaosqlite3_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libdaosqlite3_la-DAOFactorySqlite3Impl.lo -MD -MP -MF $(DEPDIR)/libdaosqlite3_la-DAOFactorySqlite3Impl.Tpo -c -o libdaosqlite3_la-DAOFactorySqlite3Impl.lo `test -f 'DAOFactorySqlite3Impl.cpp' || echo '$(srcdir)/'`DAOFactorySqlite3Impl.cpp
