@@ -38,7 +38,7 @@ GOptionGroup* MaintenanceController::getOptionGroup() {
 	GOptionGroup* group = g_option_group_new(
 			"maint",
 			"Options for the Maintenance Controller",
-			"The Test Controller runs tests on various portions of the Gemini codebase",
+			"The Maintenance Controller updates database entries and other miscellaneous upkeep",
 			NULL,
 			NULL );
 	g_option_group_add_entries( group, options );
