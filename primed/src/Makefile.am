@@ -5,7 +5,7 @@ gemini_prime_d_LDADD=dao/libdao.la libmagic/libmagic.la $(GSTREAMER_LIBS)
 gemini_prime_d_SOURCES= \
 	Filesystem.cpp \
 	TagExtractor.cpp \
-	MetadataStore.cpp \
+	MetadataService.cpp \
 	Track.cpp \
 	Album.cpp \
 	Artist.cpp \

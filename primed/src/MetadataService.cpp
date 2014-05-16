@@ -5,8 +5,7 @@
  *      Author: emoryau
  */
 
-#include "MetadataStore.hpp"
-#include <glib.h>
+#include "MetadataService.hpp"
 
 MetadataService::MetadataService( DAOFactory* daoFactory ) {
 	this->daoFactory = daoFactory;

@@ -10,7 +10,7 @@
 
 #include "MaintenanceController.hpp"
 #include "TagExtractor.hpp"
-#include "MetadataStore.hpp"
+#include "MetadataService.hpp"
 #include "Filesystem.hpp"
 #include "PlaylistService.hpp"
 
