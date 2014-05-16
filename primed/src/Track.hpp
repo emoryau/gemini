@@ -19,6 +19,7 @@ public:
 	Track(TagExtractor& te);
 	virtual ~Track();
 
+	void print();
 	bool operator< (const Track &t) const;
 
 	long id;
