@@ -226,6 +226,7 @@ void actionPlaylistServiceTest(void) {
 		} while( album_id < 0 );
 		playlistService->cueAlbumShuffledById( album_id );
 		playlistService->cueAlbumOrderedById( album_id );
+		playlistService->saveState();
 		do {
 			printCurrentTrackFromPlaylistService( playlistService, daoFactory );
 			playlistService->cueNextTrack();
