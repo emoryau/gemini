@@ -35,6 +35,7 @@ public:
 	void cueAlbumOrderedById( long album_id );
 	void cueCustomPlaylist( Playlist* playlist );
 	void exitMode();
+	void saveState();
 
 	void createNewEverythingPlaylist();
 	void refreshEverythingPlaylist();
@@ -45,6 +46,10 @@ private:
 	static const char* EVERYTHING_PLAYLIST_NAME;
 	static const char* SPECIAL_PLAYLIST_NAME;
 
+	static const char* SETTING_EVERYTHING_PLAYLIST_POSITION;
+	static const char* SETTING_CURRENT_PLAYLIST_POSITION;
+	static const char* SETTING_PLAYLIST_SERVICE_MODE;
+
 	DAOFactory* daoFactory;
 
 	Playlist* everythingPlaylist;
@@ -54,6 +59,8 @@ private:
 	Playlist::TrackIdsIterator currentPlaylistIter;
 
 	PlaybackMode mode;
+
+	void restoreState();
 };
 
 #endif /* PLAYLISTSERVICE_HPP_ */
