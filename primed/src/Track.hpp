@@ -9,15 +9,12 @@
 #define TRACK_HPP_
 
 #include <string>
-#include "TagExtractor.hpp"
 #include "Artist.hpp"
 #include "Album.hpp"
 
 class Track {
 public:
 	Track();
-	Track(TagExtractor& te);
-	virtual ~Track();
 
 	void print();
 	bool operator< (const Track &t) const;

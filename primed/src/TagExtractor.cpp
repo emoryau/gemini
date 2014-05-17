@@ -5,9 +5,10 @@
  *      Author: emoryau
  */
 
-#include "TagExtractor.hpp"
 #include <glib.h>
 #include <gst/gst.h>
+
+#include "TagExtractor.hpp"
 
 TagExtractor::TagExtractor() {
 	file_uri = NULL;

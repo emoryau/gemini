@@ -13,19 +13,20 @@
 #include "Track.hpp"
 #include "Artist.hpp"
 #include "Album.hpp"
+#include "TagExtractor.hpp"
 #include "dao/DAOFactory.hpp"
 
 class MetadataService {
 public:
-	MetadataService(): daoFactory( NULL ) { };
+	MetadataService(): dao_factory( NULL ) { };
 	MetadataService( DAOFactory* daoFactory );
 	virtual ~MetadataService();
 
-	void setDAOFactory( DAOFactory* daoFactory) { this->daoFactory = daoFactory; };
-	void addExtractedTrack( TagExtractor& te );
+	void setDAOFactory( DAOFactory* daoFactory) { this->dao_factory = daoFactory; };
+	void insertOrUpdateExtractedTrack( TagExtractor& te );
 
 private:
-	DAOFactory* daoFactory;
+	DAOFactory* dao_factory;
 };
 
 

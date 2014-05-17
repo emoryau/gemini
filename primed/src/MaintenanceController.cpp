@@ -13,6 +13,7 @@
 #include "MetadataService.hpp"
 #include "Filesystem.hpp"
 #include "PlaylistService.hpp"
+#include "GeminiException.hpp"
 
 gchar* MaintenanceController::scan_directory = NULL;
 gboolean MaintenanceController::update_playlists = FALSE;
@@ -65,15 +66,19 @@ void MaintenanceController::scanDirectory() {
 
 	metadata_service.setDAOFactory( dao_factory );
 
-	for (Filesystem::iterator it = directory_crawler.begin(); it != directory_crawler.end(); ++it) {
-		// Parse file
-		std::string filename = *it;
+	try {
+		for (Filesystem::iterator it = directory_crawler.begin(); it != directory_crawler.end(); ++it) {
+			// Parse file
+			std::string filename = *it;
 
-		if( isInBlacklist( filename ) )
-			continue;
+			if( isInBlacklist( filename ) )
+				continue;
 
-		extractor.readTags( filename.c_str() );
-		metadata_service.addExtractedTrack( extractor );
+			extractor.readTags( filename.c_str() );
+			metadata_service.insertOrUpdateExtractedTrack( extractor );
+		}
+	} catch( GeminiException* ex ) {
+		g_critical( "Exception: %s", ex->what() );
 	}
 }
 

@@ -7,8 +7,6 @@ gemini_prime_d_SOURCES= \
 	TagExtractor.cpp \
 	MetadataService.cpp \
 	Track.cpp \
-	Album.cpp \
-	Artist.cpp \
 	PlaylistService.cpp \
 	GeminiException.cpp \
 	Controller.cpp \

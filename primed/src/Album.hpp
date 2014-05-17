@@ -10,14 +10,12 @@
 
 #include <string>
 #include "Artist.hpp"
-#include "TagExtractor.hpp"
 
 class Album {
 public:
 	Album() :
-			id( -1 ), replayGain( -99.0 ), artist( NULL ) {
+			id( -1 ), name(""), replayGain( -99.0 ), artist( NULL ) {
 	};
-	Album( TagExtractor& te );
 
 	bool operator<( const Album &a ) const {
 		return name < a.name;
