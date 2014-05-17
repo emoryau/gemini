@@ -10,6 +10,7 @@
 
 #include "TestController.hpp"
 #include "PlaylistService.hpp"
+#include "MetadataService.hpp"
 
 gboolean TestController::test_playlist_service = FALSE;
 gboolean TestController::test_database = FALSE;
@@ -75,106 +76,110 @@ void TestController::testDatabase() {
 
 void TestController::testPlaylistService() {
 	try {
-		PlaylistService* playlistService = new PlaylistService( dao_factory );
-		Track* criterion;
+		PlaylistService* playlist_service = new PlaylistService( dao_factory );
+		MetadataService* metadata_service = new MetadataService( dao_factory );
 		Track* track = NULL;
-		TrackDAO* trackDAO = dao_factory->getTrackDAO();
 
 		g_print( "-- Test PlaylistService::getCurrentTrackId\n" );
-		printCurrentTrackFromPlaylistService( playlistService, dao_factory );
+		printCurrentTrackFromPlaylistService( playlist_service, dao_factory );
 
 		g_print( "-- Test PlaylistService::cueNextTrack\n" );
-		playlistService->cueNextTrack();
-		printCurrentTrackFromPlaylistService( playlistService, dao_factory );
+		playlist_service->cueNextTrack();
+		printCurrentTrackFromPlaylistService( playlist_service, dao_factory );
 
 		g_print( "-- Test PlaylistService::cueArtistById\n" );
 		long artist_id = -1;
 		do {
-			criterion = new Track();
-			criterion->id = playlistService->getCurrentTrackId();
-			track = trackDAO->getTrack( criterion );
+			track = metadata_service->getTrackById( playlist_service->getCurrentTrackId() );
 			if( track->artist != NULL ) {
 				artist_id = track->artist->id;
+			} else {
+				g_print( "-- Advancing\n");
+				playlist_service->cueNextTrack();
+				printCurrentTrackFromPlaylistService( playlist_service, dao_factory );
 			}
-			trackDAO->free( track );
-			delete criterion;
+			metadata_service->free( track );
 		} while( artist_id < 0 );
-		playlistService->cueArtistById( artist_id );
+		playlist_service->cueArtistById( artist_id );
 		do {
-			printCurrentTrackFromPlaylistService( playlistService, dao_factory );
-			playlistService->cueNextTrack();
-		} while( playlistService->getPlaybackMode() == PlaylistService::ARTIST );
+			printCurrentTrackFromPlaylistService( playlist_service, dao_factory );
+			playlist_service->cueNextTrack();
+		} while( playlist_service->getPlaybackMode() == PlaylistService::ARTIST );
 		g_print( "-- Back to everything playlist\n" );
-		printCurrentTrackFromPlaylistService( playlistService, dao_factory );
+		printCurrentTrackFromPlaylistService( playlist_service, dao_factory );
 
 		g_print( "-- Test PlaylistService::cueAlbumShuffledById\n" );
 		long album_id = -1;
 		do {
-			criterion = new Track();
-			criterion->id = playlistService->getCurrentTrackId();
-			track = trackDAO->getTrack( criterion );
+			track = metadata_service->getTrackById( playlist_service->getCurrentTrackId() );
 			if( track->album != NULL ) {
 				album_id = track->album->id;
+			} else {
+				g_print( "-- Advancing\n");
+				playlist_service->cueNextTrack();
+				printCurrentTrackFromPlaylistService( playlist_service, dao_factory );
 			}
-			trackDAO->free( track );
-			delete criterion;
+			metadata_service->free( track );
 		} while( album_id < 0 );
-		playlistService->cueAlbumShuffledById( album_id );
+		playlist_service->cueAlbumShuffledById( album_id );
 		do {
-			printCurrentTrackFromPlaylistService( playlistService, dao_factory );
-			playlistService->cueNextTrack();
-		} while( playlistService->getPlaybackMode() == PlaylistService::ALBUM_SHUFFLED );
+			printCurrentTrackFromPlaylistService( playlist_service, dao_factory );
+			playlist_service->cueNextTrack();
+		} while( playlist_service->getPlaybackMode() == PlaylistService::ALBUM_SHUFFLED );
 		g_print( "-- Back to everything playlist\n" );
-		printCurrentTrackFromPlaylistService( playlistService, dao_factory );
+		printCurrentTrackFromPlaylistService( playlist_service, dao_factory );
 
 		g_print( "-- Test PlaylistService::cuePreviousTrack\n" );
-		playlistService->cuePreviousTrack();
-		printCurrentTrackFromPlaylistService( playlistService, dao_factory );
+		playlist_service->cuePreviousTrack();
+		printCurrentTrackFromPlaylistService( playlist_service, dao_factory );
 
 		g_print( "-- Test PlaylistService::cueAlbumOrderedById\n" );
 		album_id = -1;
 		do {
-			criterion = new Track();
-			criterion->id = playlistService->getCurrentTrackId();
-			track = trackDAO->getTrack( criterion );
+			track = metadata_service->getTrackById( playlist_service->getCurrentTrackId() );
 			if( track->album != NULL ) {
 				album_id = track->album->id;
+			} else {
+				g_print( "-- Advancing\n");
+				playlist_service->cueNextTrack();
+				printCurrentTrackFromPlaylistService( playlist_service, dao_factory );
 			}
-			trackDAO->free( track );
-			delete criterion;
+			metadata_service->free( track );
 		} while( album_id < 0 );
-		playlistService->cueAlbumOrderedById( album_id );
+		playlist_service->cueAlbumOrderedById( album_id );
 		do {
-			printCurrentTrackFromPlaylistService( playlistService, dao_factory );
-			playlistService->cueNextTrack();
-		} while( playlistService->getPlaybackMode() == PlaylistService::ALBUM_ORDERED );
+			printCurrentTrackFromPlaylistService( playlist_service, dao_factory );
+			playlist_service->cueNextTrack();
+		} while( playlist_service->getPlaybackMode() == PlaylistService::ALBUM_ORDERED );
 		g_print( "-- Back to everything playlist\n" );
-		printCurrentTrackFromPlaylistService( playlistService, dao_factory );
+		printCurrentTrackFromPlaylistService( playlist_service, dao_factory );
 
 		g_print( "-- Test PlaylistService::cueAlbumShuffledById & PlaylistService::cueAlbumOrderedById\n" );
 		album_id = -1;
 		do {
-			criterion = new Track();
-			criterion->id = playlistService->getCurrentTrackId();
-			track = trackDAO->getTrack( criterion );
+			track = metadata_service->getTrackById( playlist_service->getCurrentTrackId() );
 			if( track->album != NULL ) {
 				album_id = track->album->id;
+			} else {
+				g_print( "-- Advancing\n");
+				playlist_service->cueNextTrack();
+				printCurrentTrackFromPlaylistService( playlist_service, dao_factory );
 			}
-			trackDAO->free( track );
-			delete criterion;
+			metadata_service->free( track );
 		} while( album_id < 0 );
-		playlistService->cueAlbumShuffledById( album_id );
-		playlistService->cueAlbumOrderedById( album_id );
-		playlistService->saveState();
+		playlist_service->cueAlbumShuffledById( album_id );
+		playlist_service->cueAlbumOrderedById( album_id );
+		playlist_service->saveState();
 		do {
-			printCurrentTrackFromPlaylistService( playlistService, dao_factory );
-			playlistService->cueNextTrack();
-		} while( playlistService->getPlaybackMode() == PlaylistService::ALBUM_ORDERED );
+			printCurrentTrackFromPlaylistService( playlist_service, dao_factory );
+			playlist_service->cueNextTrack();
+		} while( playlist_service->getPlaybackMode() == PlaylistService::ALBUM_ORDERED );
 		g_print( "-- Back to everything playlist\n" );
-		printCurrentTrackFromPlaylistService( playlistService, dao_factory );
+		printCurrentTrackFromPlaylistService( playlist_service, dao_factory );
 
-		delete playlistService;
+		delete playlist_service;
+		delete metadata_service;
 	} catch( std::exception* ex ) {
-		g_error( ex->what() );
+		g_critical( "Exception: %s", ex->what() );
 	}
 }
