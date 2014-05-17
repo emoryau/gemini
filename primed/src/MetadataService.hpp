@@ -24,6 +24,8 @@ public:
 
 	void setDAOFactory( DAOFactory* daoFactory) { this->dao_factory = daoFactory; };
 	void insertOrUpdateExtractedTrack( TagExtractor& te );
+	Track* getTrackById( long track_id );
+	void free( Track* track );
 
 private:
 	DAOFactory* dao_factory;

@@ -60,3 +60,15 @@ void MetadataService::insertOrUpdateExtractedTrack( TagExtractor& te ) {
 	delete album;
 	delete artist;
 }
+
+Track* MetadataService::getTrackById( long track_id ) {
+	TrackDAO* track_dao = dao_factory->getTrackDAO();
+	Track criterion;
+	criterion.id = track_id;
+	Track* track = track_dao->getTrack( &criterion );
+	return track;
+}
+
+void MetadataService::free( Track* track ) {
+	dao_factory->getTrackDAO()->free( track );
+}
