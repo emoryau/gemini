@@ -199,7 +199,7 @@ void TrackDAOSqlite3Impl::ensureDBSchema() {
 	sql.append( "  `Checksum` VARCHAR(32) NOT NULL," );
 	sql.append( "  `Name` VARCHAR(255) NOT NULL," );
 	sql.append( "  `Art_Filename` VARCHAR(255) DEFAULT NULL," );
-	sql.append( "  `ArtistId` INTEGER NOT NULL," );
+	sql.append( "  `ArtistId` INTEGER DEFAULT NULL," );
 	sql.append( "  `AlbumArtistId` INTEGER DEFAULT NULL," );
 	sql.append( "  `AlbumId` INTEGER DEFAULT NULL," );
 	sql.append( "  `TrackNumber` INTEGER DEFAULT 0," );
