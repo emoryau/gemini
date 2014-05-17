@@ -6,6 +6,7 @@
  */
 
 #include <glib.h>
+#include <gst/gst.h>
 #include <stdlib.h>
 #include <string>
 #include <list>
@@ -35,6 +36,7 @@ void parseCommandLine( int argc, char** argv ) {
 	context = g_option_context_new( "- music playback daemon" );
 	g_option_context_add_main_entries( context, command_line_entries, NULL );
 
+	g_option_context_add_group (context, gst_init_get_option_group ());
 	for( ControllerList::iterator controller_iter = controllers.begin(); controller_iter != controllers.end(); controller_iter++ ) {
 		g_option_context_add_group( context, (*controller_iter)->getOptionGroup() );
 	}
@@ -48,7 +50,7 @@ void parseCommandLine( int argc, char** argv ) {
 }
 
 int main( int argc, char** argv ) {
-	gst_init( &argc, &argv );
+	gst_init( NULL, NULL );
 
 	controllers.push_back( new TestController );
 	controllers.push_back( new MaintenanceController );
