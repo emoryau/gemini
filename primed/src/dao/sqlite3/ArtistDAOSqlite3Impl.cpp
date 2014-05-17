@@ -38,7 +38,7 @@ void ArtistDAOSqlite3Impl::free( Artist* artist ) {
 }
 
 Artist* ArtistDAOSqlite3Impl::getArtist( Artist* criterion ) {
-	Artist* artist;
+	Artist* artist = NULL;
 	int column = 0;
 	QueryCriteriaList queryCriteriaList;
 	std::string* sql;
@@ -62,13 +62,11 @@ Artist* ArtistDAOSqlite3Impl::getArtist( Artist* criterion ) {
 	sqlite3_stmt* pStmt = prepare( sql->c_str() );
 	bindVariablesFromQueryCriteria( pStmt, queryCriteriaList );
 
-	if( step( pStmt ) != SQLITE_ROW ) {
-		return NULL;
+	if( step( pStmt ) == SQLITE_ROW ) {
+		artist = new Artist();
+		artist->id = sqlite3_column_int64( pStmt, column++ );
+		artist->name.assign( (const char*) sqlite3_column_text( pStmt, column++ ) );
 	}
-
-	artist = new Artist();
-	artist->id = sqlite3_column_int64( pStmt, column++ );
-	artist->name.assign( (const char*) sqlite3_column_text( pStmt, column++ ) );
 
 	finalize( pStmt );
 	delete sql;

@@ -47,7 +47,7 @@ void PlaylistDAOSqlite3Impl::free( Playlist* playlist ) {
 }
 
 Playlist* PlaylistDAOSqlite3Impl::getPlaylist( Playlist* criterion ) {
-	Playlist* playlist;
+	Playlist* playlist = NULL;
 	int column = 0;
 	QueryCriteriaList queryCriteriaList;
 	std::string* sql;
@@ -71,18 +71,16 @@ Playlist* PlaylistDAOSqlite3Impl::getPlaylist( Playlist* criterion ) {
 	sqlite3_stmt* pStmt = prepare( sql->c_str() );
 	bindVariablesFromQueryCriteria( pStmt, queryCriteriaList );
 
-	if( step( pStmt ) != SQLITE_ROW ) {
-		return NULL;
-	}
+	if( step( pStmt ) == SQLITE_ROW ) {
+		playlist = new Playlist();
+		playlist->id = sqlite3_column_int64( pStmt, column++ );
+		playlist->name.assign( (const char*) sqlite3_column_text( pStmt, column++ ) );
 
-	playlist = new Playlist();
-	playlist->id = sqlite3_column_int64( pStmt, column++ );
-	playlist->name.assign( (const char*) sqlite3_column_text( pStmt, column++ ) );
+		fillPlaylistTrackIds( playlist );
+	}
 
 	finalize( pStmt );
 	delete sql;
-
-	fillPlaylistTrackIds( playlist );
 
 	return playlist;
 }

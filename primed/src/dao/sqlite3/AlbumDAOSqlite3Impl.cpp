@@ -45,7 +45,7 @@ void AlbumDAOSqlite3Impl::free( Album* album ) {
 }
 
 Album* AlbumDAOSqlite3Impl::getAlbum( Album* criterion ) {
-	Album* album;
+	Album* album = NULL;
 	int column = 0;
 	QueryCriteriaList queryCriteriaList;
 	std::string* sql;
@@ -74,14 +74,12 @@ Album* AlbumDAOSqlite3Impl::getAlbum( Album* criterion ) {
 	sqlite3_stmt* pStmt = prepare( sql->c_str() );
 	bindVariablesFromQueryCriteria( pStmt, queryCriteriaList );
 
-	if( step( pStmt ) != SQLITE_ROW ) {
-		return NULL;
+	if( step( pStmt ) == SQLITE_ROW ) {
+		album = new Album();
+		album->id = sqlite3_column_int64( pStmt, column++ );
+		album->name.assign( (const char*) sqlite3_column_text( pStmt, column++ ) );
+		album->replayGain = sqlite3_column_double( pStmt, column++ );
 	}
-
-	album = new Album();
-	album->id = sqlite3_column_int64( pStmt, column++ );
-	album->name.assign( (const char*) sqlite3_column_text( pStmt, column++ ) );
-	album->replayGain = sqlite3_column_double( pStmt, column++ );
 
 	finalize( pStmt );
 	delete sql;
