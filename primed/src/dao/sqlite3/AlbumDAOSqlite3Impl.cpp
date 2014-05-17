@@ -100,7 +100,7 @@ void AlbumDAOSqlite3Impl::insertOrUpdateAlbum( Album* album ) {
 	if( step( pStmt ) == SQLITE_ROW ) {
 		album->id = sqlite3_column_int64( pStmt, 0 );
 		double replayGain = sqlite3_column_double( pStmt, 1 );
-		if( replayGain != album->replayGain && album->name.compare("") == 0 ) {
+		if( replayGain != album->replayGain && album->name.compare("") != 0 ) {
 			// TODO: Determine course of action
 			g_print( "Found album '%s', with different ReplayGain (%f, %f)\n", album->name.c_str(), album->replayGain, replayGain );
 		}
