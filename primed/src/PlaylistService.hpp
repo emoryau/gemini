@@ -52,7 +52,7 @@ private:
 
 	static int playlistRandom( int i );
 
-	DAOFactory* daoFactory;
+	DAOFactory* dao_factory;
 
 	Playlist* everything_playlist;
 	Playlist::TrackIdsIterator everything_playlist_iter;

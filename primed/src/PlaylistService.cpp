@@ -18,7 +18,7 @@ const char* PlaylistService::SETTING_EVERYTHING_PLAYLIST_POSITION = "everything_
 const char* PlaylistService::SETTING_CURRENT_PLAYLIST_POSITION = "current_playlist_position";
 const char* PlaylistService::SETTING_PLAYLIST_SERVICE_MODE = "playlist_service_mode";
 
-PlaylistService::PlaylistService( DAOFactory* daoFactory ): daoFactory(daoFactory), mode(EVERYTHING) {
+PlaylistService::PlaylistService( DAOFactory* daoFactory ): dao_factory(daoFactory), mode(EVERYTHING) {
 	Playlist everythingCriterion;
 	everythingCriterion.name.assign( EVERYTHING_PLAYLIST_NAME );
 	everything_playlist = daoFactory->getPlaylistDAO()->getPlaylist( &everythingCriterion );
@@ -38,7 +38,7 @@ PlaylistService::PlaylistService( DAOFactory* daoFactory ): daoFactory(daoFactor
 PlaylistService::~PlaylistService() {
 	saveState();
 	exitMode();
-	daoFactory->getPlaylistDAO()->free( everything_playlist );
+	dao_factory->getPlaylistDAO()->free( everything_playlist );
 }
 
 long PlaylistService::getCurrentTrackId() {
@@ -70,7 +70,7 @@ void PlaylistService::cuePreviousTrack() {
 			return;
 		} else {
 			current_playlist_iter = everything_playlist_iter;
-			daoFactory->getPlaylistDAO()->free( current_playlist );
+			dao_factory->getPlaylistDAO()->free( current_playlist );
 			current_playlist = everything_playlist;
 			mode = EVERYTHING;
 		}
@@ -84,7 +84,7 @@ void PlaylistService::cuePreviousTrack() {
 void PlaylistService::cueArtistById( long artist_id ) {
 	long current_track_id = *current_playlist_iter;
 	exitMode();
-	Playlist* new_playlist = daoFactory->getTrackDAO()->getTrackIdsByArtist( artist_id );
+	Playlist* new_playlist = dao_factory->getTrackDAO()->getTrackIdsByArtist( artist_id );
 	if( new_playlist == NULL ) {
 		//TODO: report error
 		current_playlist = everything_playlist;
@@ -93,7 +93,7 @@ void PlaylistService::cueArtistById( long artist_id ) {
 		return;
 	}
 	current_playlist = new Playlist( *new_playlist );
-	daoFactory->getTrackDAO()->free( new_playlist );
+	dao_factory->getTrackDAO()->free( new_playlist );
 	current_playlist->name.assign( SPECIAL_PLAYLIST_NAME );
 
 	std::random_shuffle( current_playlist->track_ids.begin(), current_playlist->track_ids.end(), playlistRandom );
@@ -108,7 +108,7 @@ void PlaylistService::cueArtistById( long artist_id ) {
 
 void PlaylistService::cueAlbumShuffledById( long album_id ) {
 	exitMode();
-	Playlist* new_playlist = daoFactory->getTrackDAO()->getTrackIdsByAlbum( album_id );
+	Playlist* new_playlist = dao_factory->getTrackDAO()->getTrackIdsByAlbum( album_id );
 	if( new_playlist == NULL ) {
 		//TODO: report error
 		current_playlist = everything_playlist;
@@ -117,16 +117,16 @@ void PlaylistService::cueAlbumShuffledById( long album_id ) {
 		return;
 	}
 	current_playlist = new Playlist( *new_playlist );
-	daoFactory->getTrackDAO()->free( new_playlist );
+	dao_factory->getTrackDAO()->free( new_playlist );
 	current_playlist->name.assign( SPECIAL_PLAYLIST_NAME );
 	std::random_shuffle( current_playlist->track_ids.begin(), current_playlist->track_ids.end() );
 
 	// Move current track to beginning
-	Playlist::TrackIdsIterator shuffledIter = std::find( current_playlist->track_ids.begin(), current_playlist->track_ids.end(), *everything_playlist_iter );
-	if( shuffledIter == current_playlist->track_ids.end() ) {
+	Playlist::TrackIdsIterator shuffled_iter = std::find( current_playlist->track_ids.begin(), current_playlist->track_ids.end(), *everything_playlist_iter );
+	if( shuffled_iter == current_playlist->track_ids.end() ) {
 		// TODO: Report error in db: Could not find current track
 	} else {
-		std::swap( *current_playlist->track_ids.begin(), *shuffledIter );
+		std::swap( *current_playlist->track_ids.begin(), *shuffled_iter );
 	}
 
 	current_playlist_iter = current_playlist->track_ids.begin();
@@ -135,7 +135,7 @@ void PlaylistService::cueAlbumShuffledById( long album_id ) {
 
 void PlaylistService::cueAlbumOrderedById( long album_id ) {
 	exitMode();
-	Playlist* new_playlist = daoFactory->getTrackDAO()->getTrackIdsByAlbum( album_id );
+	Playlist* new_playlist = dao_factory->getTrackDAO()->getTrackIdsByAlbum( album_id );
 	if( new_playlist == NULL ) {
 		//TODO: report error
 		current_playlist = everything_playlist;
@@ -144,7 +144,7 @@ void PlaylistService::cueAlbumOrderedById( long album_id ) {
 		return;
 	}
 	current_playlist = new Playlist( *new_playlist );
-	daoFactory->getTrackDAO()->free( new_playlist );
+	dao_factory->getTrackDAO()->free( new_playlist );
 	current_playlist->name.assign( SPECIAL_PLAYLIST_NAME );
 	current_playlist_iter = current_playlist->track_ids.begin();
 	mode = ALBUM_ORDERED;
@@ -163,15 +163,15 @@ void PlaylistService::cueCustomPlaylist( Playlist* playlist ) {
 }
 
 void PlaylistService::createNewEverythingPlaylist() {
-	Playlist* newEverythingPlaylist = daoFactory->getTrackDAO()->getTrackIds();
+	Playlist* newEverythingPlaylist = dao_factory->getTrackDAO()->getTrackIds();
 	newEverythingPlaylist->name.assign( EVERYTHING_PLAYLIST_NAME );
 	std::random_shuffle( newEverythingPlaylist->track_ids.begin(), newEverythingPlaylist->track_ids.end() );
-	daoFactory->getPlaylistDAO()->insertOrUpdatePlaylist( newEverythingPlaylist );
-	daoFactory->getTrackDAO()->free( newEverythingPlaylist );
+	dao_factory->getPlaylistDAO()->insertOrUpdatePlaylist( newEverythingPlaylist );
+	dao_factory->getTrackDAO()->free( newEverythingPlaylist );
 }
 
 void PlaylistService::saveState() {
-	SettingsDAO* settingsDAO = daoFactory->getSettingsDAO();
+	SettingsDAO* settingsDAO = dao_factory->getSettingsDAO();
 
 	long everythingPlaylistPosition = everything_playlist_iter - everything_playlist->track_ids.begin();
 	long currentPlaylistPosition = current_playlist_iter - current_playlist->track_ids.begin();
@@ -183,7 +183,7 @@ void PlaylistService::saveState() {
 
 	if( mode != EVERYTHING ) {
 		current_playlist->name.assign( SPECIAL_PLAYLIST_NAME );
-		daoFactory->getPlaylistDAO()->insertOrUpdatePlaylist( current_playlist );
+		dao_factory->getPlaylistDAO()->insertOrUpdatePlaylist( current_playlist );
 	}
 }
 
@@ -192,10 +192,10 @@ void PlaylistService::refreshEverythingPlaylist() {
 		THROW_GEMINI_EXCEPTION( "Trying to refresh with null everything playlist" );
 	}
 
-	Playlist* track_table = daoFactory->getTrackDAO()->getTrackIds();
+	Playlist* track_table = dao_factory->getTrackDAO()->getTrackIds();
 	std::set<long> track_table_set( track_table->track_ids.begin(), track_table->track_ids.end() );
 	std::set<long> everything_set( everything_playlist->track_ids.begin(), everything_playlist->track_ids.end() );
-	daoFactory->getTrackDAO()->free( track_table );
+	dao_factory->getTrackDAO()->free( track_table );
 
 	std::set<long> tracks_not_in_everything;
 	std::set<long> tracks_not_in_table;
@@ -248,7 +248,7 @@ void PlaylistService::refreshEverythingPlaylist() {
 	// Add tracks from the track table which are missing from the everything playlist
 	everything_playlist->track_ids.insert( everything_playlist->track_ids.end(), tracks_not_in_everything.begin(), tracks_not_in_everything.end() );
 	std::random_shuffle( everything_playlist_iter+1, everything_playlist->track_ids.end(), playlistRandom );
-	daoFactory->getPlaylistDAO()->insertOrUpdatePlaylist( everything_playlist );
+	dao_factory->getPlaylistDAO()->insertOrUpdatePlaylist( everything_playlist );
 }
 
 void PlaylistService::exitMode() {
@@ -277,11 +277,11 @@ void PlaylistService::restoreState() {
 	long everything_playlist_position;
 	long current_playlist_position;
 	long restore_mode_l;
-	SettingsDAO* settingsDAO = daoFactory->getSettingsDAO();
+	SettingsDAO* settings_dao = dao_factory->getSettingsDAO();
 
-	settingsDAO->get( SETTING_EVERYTHING_PLAYLIST_POSITION, everything_playlist_position );
-	settingsDAO->get( SETTING_CURRENT_PLAYLIST_POSITION, current_playlist_position );
-	settingsDAO->get( SETTING_PLAYLIST_SERVICE_MODE, restore_mode_l );
+	settings_dao->get( SETTING_EVERYTHING_PLAYLIST_POSITION, everything_playlist_position );
+	settings_dao->get( SETTING_CURRENT_PLAYLIST_POSITION, current_playlist_position );
+	settings_dao->get( SETTING_PLAYLIST_SERVICE_MODE, restore_mode_l );
 
 	if( everything_playlist->track_ids.end() - everything_playlist->track_ids.begin() <= everything_playlist_position ) {
 		g_error( "Saved everythingPlaylistPosition is too large. Reverting to beginning" );
@@ -294,7 +294,7 @@ void PlaylistService::restoreState() {
 	if( mode != EVERYTHING ) {
 		Playlist criterion;
 		criterion.name.assign( SPECIAL_PLAYLIST_NAME );
-		Playlist* new_playlist = daoFactory->getPlaylistDAO()->getPlaylist( &criterion );
+		Playlist* new_playlist = dao_factory->getPlaylistDAO()->getPlaylist( &criterion );
 		if( new_playlist == NULL ) {
 			// TODO: report error
 			current_playlist = everything_playlist;
@@ -302,7 +302,7 @@ void PlaylistService::restoreState() {
 			mode = EVERYTHING;
 		} else {
 			current_playlist = new Playlist( *new_playlist );
-			daoFactory->getPlaylistDAO()->free( new_playlist );
+			dao_factory->getPlaylistDAO()->free( new_playlist );
 		}
 
 		if( current_playlist->track_ids.end() - current_playlist->track_ids.begin() <= current_playlist_position ) {
