@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <set>
+#include <cstdlib>
 #include <glib.h>
 #include "PlaylistService.hpp"
 #include "GeminiException.hpp"
@@ -95,7 +96,7 @@ void PlaylistService::cueArtistById( long artist_id ) {
 	daoFactory->getTrackDAO()->free( new_playlist );
 	currentPlaylist->name.assign( SPECIAL_PLAYLIST_NAME );
 
-	std::random_shuffle( currentPlaylist->trackIds.begin(), currentPlaylist->trackIds.end() );
+	std::random_shuffle( currentPlaylist->trackIds.begin(), currentPlaylist->trackIds.end(), playlistRandom );
 	// Move current track to beginning
 	Playlist::TrackIdsIterator shuffledIter = std::find( currentPlaylist->trackIds.begin(), currentPlaylist->trackIds.end(), current_track_id );
 	if( shuffledIter != currentPlaylist->trackIds.end() ) {
@@ -220,7 +221,7 @@ void PlaylistService::refreshEverythingPlaylist() {
 
 	// Rebuild everything playlist trackid vector in the same order, but skip trackids which are no longer in the tracks table
 	std::vector<long> new_everything_trackids;
-	new_everything_trackids.resize( everythingPlaylist->trackIds.size() );
+	new_everything_trackids.reserve( everythingPlaylist->trackIds.size() );
 	for( Playlist::TrackIdsIterator everything_iter = everythingPlaylist->trackIds.begin(); everything_iter != everythingPlaylist->trackIds.end(); everything_iter++ ) {
 		if( tracks_not_in_table.find( *everything_iter ) == tracks_not_in_table.end() ) {
 			new_everything_trackids.push_back( *everything_iter );
@@ -238,12 +239,15 @@ void PlaylistService::refreshEverythingPlaylist() {
 	for( Playlist::TrackIdsIterator everything_search_iter = everythingPlaylist->trackIds.begin(); everything_search_iter != everythingPlaylist->trackIds.end(); everything_search_iter++ ) {
 		if( *everything_search_iter == everything_playlist_iter_trackid ) {
 			everythingPlaylistIter = everything_search_iter;
+			if( mode == EVERYTHING ) {
+				currentPlaylistIter = everythingPlaylistIter;
+			}
 		}
 	}
 
 	// Add tracks from the track table which are missing from the everything playlist
 	everythingPlaylist->trackIds.insert( everythingPlaylist->trackIds.end(), tracks_not_in_everything.begin(), tracks_not_in_everything.end() );
-	std::random_shuffle( everythingPlaylistIter+1, everythingPlaylist->trackIds.end() );
+	std::random_shuffle( everythingPlaylistIter+1, everythingPlaylist->trackIds.end(), playlistRandom );
 	daoFactory->getPlaylistDAO()->insertOrUpdatePlaylist( everythingPlaylist );
 }
 
@@ -263,6 +267,10 @@ void PlaylistService::exitMode() {
 	currentPlaylist = everythingPlaylist;
 	currentPlaylistIter = everythingPlaylistIter;
 	mode = EVERYTHING;
+}
+
+int PlaylistService::playlistRandom( int i ) {
+	return std::rand() % i;
 }
 
 void PlaylistService::restoreState() {

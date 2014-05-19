@@ -50,6 +50,8 @@ private:
 	static const char* SETTING_CURRENT_PLAYLIST_POSITION;
 	static const char* SETTING_PLAYLIST_SERVICE_MODE;
 
+	static int playlistRandom( int i );
+
 	DAOFactory* daoFactory;
 
 	Playlist* everythingPlaylist;

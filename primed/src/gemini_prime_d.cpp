@@ -7,9 +7,10 @@
 
 #include <glib.h>
 #include <gst/gst.h>
-#include <stdlib.h>
 #include <string>
 #include <list>
+#include <cstdlib>
+#include <ctime>
 
 #include "dao/DAOFactory.hpp"
 #include "TestController.hpp"
@@ -43,13 +44,14 @@ void parseCommandLine( int argc, char** argv ) {
 
 	if( !g_option_context_parse( context, &argc, &argv, &error ) ) {
 		g_error( "option parsing failed: %s", error->message );
-		exit( 1 );
+		std::exit( 1 );
 	}
 
 	g_option_context_free( context );
 }
 
 int main( int argc, char** argv ) {
+	std::srand( unsigned ( std::time(0) ) );
 	gst_init( NULL, NULL );
 
 	controllers.push_back( new TestController );
