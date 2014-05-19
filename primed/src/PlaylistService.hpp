@@ -54,11 +54,11 @@ private:
 
 	DAOFactory* daoFactory;
 
-	Playlist* everythingPlaylist;
-	Playlist::TrackIdsIterator everythingPlaylistIter;
+	Playlist* everything_playlist;
+	Playlist::TrackIdsIterator everything_playlist_iter;
 
-	Playlist* currentPlaylist;
-	Playlist::TrackIdsIterator currentPlaylistIter;
+	Playlist* current_playlist;
+	Playlist::TrackIdsIterator current_playlist_iter;
 
 	PlaybackMode mode;
 

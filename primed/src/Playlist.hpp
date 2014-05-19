@@ -19,7 +19,7 @@ public:
 
 	long id;
 	std::string name;
-	std::vector<long> trackIds;
+	std::vector<long> track_ids;
 };
 
 #endif /* PLAYLIST_HPP_ */

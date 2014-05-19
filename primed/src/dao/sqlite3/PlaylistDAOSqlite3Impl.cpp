@@ -119,9 +119,9 @@ void PlaylistDAOSqlite3Impl::insertOrUpdatePlaylist( Playlist* playlist ) {
 	std::stringstream sql;
 
 	char separator = ' ';
-	for( Playlist::TrackIdsIterator iter_track_ids = playlist->trackIds.begin(); iter_track_ids != playlist->trackIds.end(); iter_track_ids++ ) {
+	for( Playlist::TrackIdsIterator iter_track_ids = playlist->track_ids.begin(); iter_track_ids != playlist->track_ids.end(); iter_track_ids++ ) {
 		long& track_id = *iter_track_ids;
-		long order = iter_track_ids - playlist->trackIds.begin();
+		long order = iter_track_ids - playlist->track_ids.begin();
 		if( order % 500 == 0 ) {
 			if( order > 0 ) {
 				sql << ";";
@@ -154,7 +154,7 @@ void PlaylistDAOSqlite3Impl::fillPlaylistTrackIds( Playlist* playlist ) {
 	bindLong( pStmt, ":playlistid", playlist->id );
 
 	while( step( pStmt) == SQLITE_ROW ) {
-		playlist->trackIds.push_back( sqlite3_column_int64( pStmt, 0 ) );
+		playlist->track_ids.push_back( sqlite3_column_int64( pStmt, 0 ) );
 	}
 
 	finalize( pStmt );
