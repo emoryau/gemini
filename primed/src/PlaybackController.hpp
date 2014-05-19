@@ -20,6 +20,9 @@ public:
 
 private:
 	static GOptionEntry options[];
+	static gboolean foreground;
+
+	void daemon();
 };
 
 #endif /* PLAYBACKCONTROLLER_HPP_ */
