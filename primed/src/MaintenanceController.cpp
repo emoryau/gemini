@@ -83,15 +83,13 @@ void MaintenanceController::scanDirectory() {
 }
 
 void MaintenanceController::updatePlaylists() {
+	PlaylistService* playlistService = new PlaylistService( dao_factory );
 	try {
-		PlaylistService* playlistService = new PlaylistService( dao_factory );
-
 		playlistService->refreshEverythingPlaylist();
-
-		delete playlistService;
 	} catch (std::exception* ex ) {
-		g_error( ex->what() );
+		g_critical( "Exception: %s", ex->what() );
 	}
+	delete playlistService;
 }
 
 bool MaintenanceController::isInBlacklist( const std::string& subject ) {
