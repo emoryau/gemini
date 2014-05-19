@@ -6,6 +6,7 @@
  */
 
 #include <algorithm>
+#include <set>
 #include <glib.h>
 #include "PlaylistService.hpp"
 #include "GeminiException.hpp"
@@ -189,7 +190,61 @@ void PlaylistService::refreshEverythingPlaylist() {
 	if( everythingPlaylist == NULL ) {
 		THROW_GEMINI_EXCEPTION( "Trying to refresh with null everything playlist" );
 	}
-	THROW_GEMINI_EXCEPTION( "PlaylistService::refreshEverythingPlaylist() unimplemented" );
+
+	Playlist* track_table = daoFactory->getTrackDAO()->getTrackIds();
+	std::set<long> track_table_set( track_table->trackIds.begin(), track_table->trackIds.end() );
+	std::set<long> everything_set( everythingPlaylist->trackIds.begin(), everythingPlaylist->trackIds.end() );
+	daoFactory->getTrackDAO()->free( track_table );
+
+	std::set<long> tracks_not_in_everything;
+	std::set<long> tracks_not_in_table;
+
+	for( std::set<long>::iterator table_iter = track_table_set.begin(); table_iter != track_table_set.end(); table_iter++ ) {
+		if( everything_set.find( *table_iter ) == everything_set.end() ) {
+			tracks_not_in_everything.insert( *table_iter );
+		}
+	}
+	for( std::set<long>::iterator everything_iter = everything_set.begin(); everything_iter != everything_set.end(); everything_iter++ ) {
+		if( track_table_set.find( *everything_iter ) == track_table_set.end() ) {
+			tracks_not_in_table.insert( *everything_iter );
+		}
+	}
+	g_message( "In Tracks table, but missing from everything playlist:" );
+	for( std::set<long>::iterator missing_iter = tracks_not_in_everything.begin(); missing_iter != tracks_not_in_everything.end(); missing_iter++ ) {
+		g_message("\t%d", *missing_iter);
+	}
+	g_message( "In Everything Playlist, but missing from tracks table:" );
+	for( std::set<long>::iterator missing_iter = tracks_not_in_table.begin(); missing_iter != tracks_not_in_table.end(); missing_iter++ ) {
+		g_message("\t%d", *missing_iter);
+	}
+
+	// Rebuild everything playlist trackid vector in the same order, but skip trackids which are no longer in the tracks table
+	std::vector<long> new_everything_trackids;
+	new_everything_trackids.resize( everythingPlaylist->trackIds.size() );
+	for( Playlist::TrackIdsIterator everything_iter = everythingPlaylist->trackIds.begin(); everything_iter != everythingPlaylist->trackIds.end(); everything_iter++ ) {
+		if( tracks_not_in_table.find( *everything_iter ) == tracks_not_in_table.end() ) {
+			new_everything_trackids.push_back( *everything_iter );
+		} else {
+			// This track is being dropped from the playlist - advance the iterator if it points to this track
+			if( (*everything_iter) == (*everythingPlaylistIter) ) {
+				everythingPlaylistIter++;
+			}
+		}
+	}
+	long everything_playlist_iter_trackid = *everythingPlaylistIter;
+	everythingPlaylist->trackIds.assign( new_everything_trackids.begin(), new_everything_trackids.end() );
+
+	// Restore everythingPlaylistIter
+	for( Playlist::TrackIdsIterator everything_search_iter = everythingPlaylist->trackIds.begin(); everything_search_iter != everythingPlaylist->trackIds.end(); everything_search_iter++ ) {
+		if( *everything_search_iter == everything_playlist_iter_trackid ) {
+			everythingPlaylistIter = everything_search_iter;
+		}
+	}
+
+	// Add tracks from the track table which are missing from the everything playlist
+	everythingPlaylist->trackIds.insert( everythingPlaylist->trackIds.end(), tracks_not_in_everything.begin(), tracks_not_in_everything.end() );
+	std::random_shuffle( everythingPlaylistIter+1, everythingPlaylist->trackIds.end() );
+	daoFactory->getPlaylistDAO()->insertOrUpdatePlaylist( everythingPlaylist );
 }
 
 void PlaylistService::exitMode() {
