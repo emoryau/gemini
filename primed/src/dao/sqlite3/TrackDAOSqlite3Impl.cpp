@@ -214,35 +214,35 @@ void TrackDAOSqlite3Impl::ensureDBSchema() {
 	}
 }
 
-void TrackDAOSqlite3Impl::free( Playlist* playlist ) {
-	delete playlist;
+void TrackDAOSqlite3Impl::free( std::vector<long>* track_ids ) {
+	delete track_ids;
 }
 
-Playlist* TrackDAOSqlite3Impl::getTrackIds( ) {
-	Playlist* playlist;
+std::vector<long>* TrackDAOSqlite3Impl::getTrackIds( ) {
+	std::vector<long>* track_ids;
 
 	checkDb();
 
-	playlist = new Playlist();
+	track_ids = new std::vector<long>();
 
 	sqlite3_stmt* pStmt = prepare( "SELECT "
 			"`TrackId` "
 			" FROM `Tracks`;" );
 	while( step( pStmt ) == SQLITE_ROW ) {
-		playlist->track_ids.push_back( sqlite3_column_int64( pStmt, 0) );
+		track_ids->push_back( sqlite3_column_int64( pStmt, 0) );
 	}
 
 	finalize( pStmt );
 
-	return playlist;
+	return track_ids;
 }
 
-Playlist* TrackDAOSqlite3Impl::getTrackIdsByArtist( long artist_id ) {
-	Playlist* playlist;
+std::vector<long>* TrackDAOSqlite3Impl::getTrackIdsByArtistId( long artist_id ) {
+	std::vector<long>* track_ids;
 
 	checkDb();
 
-	playlist = new Playlist();
+	track_ids = new std::vector<long>();
 
 	sqlite3_stmt* pStmt = prepare( "SELECT "
 			"`TrackId` "
@@ -250,20 +250,20 @@ Playlist* TrackDAOSqlite3Impl::getTrackIdsByArtist( long artist_id ) {
 			" WHERE `ArtistId` = :artistid;");
 	bindLong( pStmt, ":artistid", artist_id );
 	while( step( pStmt ) == SQLITE_ROW ) {
-		playlist->track_ids.push_back( sqlite3_column_int64( pStmt, 0) );
+		track_ids->push_back( sqlite3_column_int64( pStmt, 0) );
 	}
 
 	finalize( pStmt );
 
-	return playlist;
+	return track_ids;
 }
 
-Playlist* TrackDAOSqlite3Impl::getTrackIdsByAlbum( long album_id ) {
-	Playlist* playlist;
+std::vector<long>* TrackDAOSqlite3Impl::getTrackIdsByAlbumId( long album_id ) {
+	std::vector<long>* track_ids;
 
 	checkDb();
 
-	playlist = new Playlist();
+	track_ids = new std::vector<long>();
 
 	sqlite3_stmt* pStmt = prepare( "SELECT "
 			"`TrackId`, `DiscNumber`, `TrackNumber` "
@@ -272,10 +272,10 @@ Playlist* TrackDAOSqlite3Impl::getTrackIdsByAlbum( long album_id ) {
 			" ORDER BY `DiscNumber` ASC, `TrackNumber` ASC");
 	bindLong( pStmt, ":albumid", album_id );
 	while( step( pStmt ) == SQLITE_ROW ) {
-		playlist->track_ids.push_back( sqlite3_column_int64( pStmt, 0) );
+		track_ids->push_back( sqlite3_column_int64( pStmt, 0) );
 	}
 
 	finalize( pStmt );
 
-	return playlist;
+	return track_ids;
 }

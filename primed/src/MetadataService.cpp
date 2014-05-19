@@ -72,3 +72,15 @@ Track* MetadataService::getTrackById( long track_id ) {
 void MetadataService::free( Track* track ) {
 	dao_factory->getTrackDAO()->free( track );
 }
+
+std::vector<long>* MetadataService::getTrackIdsByArtistId( long artist_id ) {
+	return dao_factory->getTrackDAO()->getTrackIdsByArtistId( artist_id );
+}
+
+std::vector<long>* MetadataService::getTrackIdsByAlbumId( long album_id ) {
+	return dao_factory->getTrackDAO()->getTrackIdsByAlbumId( album_id );
+}
+
+void MetadataService::free( std::vector<long>* track_ids ) {
+	dao_factory->getTrackDAO()->free( track_ids );
+}

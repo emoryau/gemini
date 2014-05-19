@@ -6,6 +6,7 @@
  */
 
 #include <algorithm>
+#include <vector>
 #include <set>
 #include <cstdlib>
 #include <glib.h>
@@ -84,17 +85,18 @@ void PlaylistService::cuePreviousTrack() {
 void PlaylistService::cueArtistById( long artist_id ) {
 	long current_track_id = *current_playlist_iter;
 	exitMode();
-	Playlist* new_playlist = dao_factory->getTrackDAO()->getTrackIdsByArtist( artist_id );
-	if( new_playlist == NULL ) {
+	std::vector<long>* new_playlist_ids = dao_factory->getTrackDAO()->getTrackIdsByArtistId( artist_id );
+	if( new_playlist_ids == NULL ) {
 		//TODO: report error
 		current_playlist = everything_playlist;
 		current_playlist_iter = everything_playlist_iter;
 		mode = EVERYTHING;
 		return;
 	}
-	current_playlist = new Playlist( *new_playlist );
-	dao_factory->getTrackDAO()->free( new_playlist );
+	current_playlist = new Playlist();
+	current_playlist->track_ids = *new_playlist_ids;
 	current_playlist->name.assign( SPECIAL_PLAYLIST_NAME );
+	dao_factory->getTrackDAO()->free( new_playlist_ids );
 
 	std::random_shuffle( current_playlist->track_ids.begin(), current_playlist->track_ids.end(), playlistRandom );
 	// Move current track to beginning
@@ -108,17 +110,18 @@ void PlaylistService::cueArtistById( long artist_id ) {
 
 void PlaylistService::cueAlbumShuffledById( long album_id ) {
 	exitMode();
-	Playlist* new_playlist = dao_factory->getTrackDAO()->getTrackIdsByAlbum( album_id );
-	if( new_playlist == NULL ) {
+	std::vector<long>* new_playlist_ids = dao_factory->getTrackDAO()->getTrackIdsByAlbumId( album_id );
+	if( new_playlist_ids == NULL ) {
 		//TODO: report error
 		current_playlist = everything_playlist;
 		current_playlist_iter = everything_playlist_iter;
 		mode = EVERYTHING;
 		return;
 	}
-	current_playlist = new Playlist( *new_playlist );
-	dao_factory->getTrackDAO()->free( new_playlist );
+	current_playlist = new Playlist();
 	current_playlist->name.assign( SPECIAL_PLAYLIST_NAME );
+	current_playlist->track_ids = *new_playlist_ids;
+	dao_factory->getTrackDAO()->free( new_playlist_ids );
 	std::random_shuffle( current_playlist->track_ids.begin(), current_playlist->track_ids.end() );
 
 	// Move current track to beginning
@@ -135,17 +138,18 @@ void PlaylistService::cueAlbumShuffledById( long album_id ) {
 
 void PlaylistService::cueAlbumOrderedById( long album_id ) {
 	exitMode();
-	Playlist* new_playlist = dao_factory->getTrackDAO()->getTrackIdsByAlbum( album_id );
-	if( new_playlist == NULL ) {
+	std::vector<long>* new_playlist_ids = dao_factory->getTrackDAO()->getTrackIdsByAlbumId( album_id );
+	if( new_playlist_ids == NULL ) {
 		//TODO: report error
 		current_playlist = everything_playlist;
 		current_playlist_iter = everything_playlist_iter;
 		mode = EVERYTHING;
 		return;
 	}
-	current_playlist = new Playlist( *new_playlist );
-	dao_factory->getTrackDAO()->free( new_playlist );
+	current_playlist = new Playlist();
+	current_playlist->track_ids = *new_playlist_ids;
 	current_playlist->name.assign( SPECIAL_PLAYLIST_NAME );
+	dao_factory->getTrackDAO()->free( new_playlist_ids );
 	current_playlist_iter = current_playlist->track_ids.begin();
 	mode = ALBUM_ORDERED;
 }
@@ -163,11 +167,13 @@ void PlaylistService::cueCustomPlaylist( Playlist* playlist ) {
 }
 
 void PlaylistService::createNewEverythingPlaylist() {
-	Playlist* newEverythingPlaylist = dao_factory->getTrackDAO()->getTrackIds();
-	newEverythingPlaylist->name.assign( EVERYTHING_PLAYLIST_NAME );
-	std::random_shuffle( newEverythingPlaylist->track_ids.begin(), newEverythingPlaylist->track_ids.end() );
-	dao_factory->getPlaylistDAO()->insertOrUpdatePlaylist( newEverythingPlaylist );
-	dao_factory->getTrackDAO()->free( newEverythingPlaylist );
+	std::vector<long>* new_everything_playlist_ids = dao_factory->getTrackDAO()->getTrackIds();
+	Playlist* new_everything_playlist = new Playlist();
+	new_everything_playlist->track_ids = *new_everything_playlist_ids;
+	dao_factory->getTrackDAO()->free( new_everything_playlist_ids );
+	new_everything_playlist->name.assign( EVERYTHING_PLAYLIST_NAME );
+	std::random_shuffle( new_everything_playlist->track_ids.begin(), new_everything_playlist->track_ids.end() );
+	dao_factory->getPlaylistDAO()->insertOrUpdatePlaylist( new_everything_playlist );
 }
 
 void PlaylistService::saveState() {
@@ -192,10 +198,10 @@ void PlaylistService::refreshEverythingPlaylist() {
 		THROW_GEMINI_EXCEPTION( "Trying to refresh with null everything playlist" );
 	}
 
-	Playlist* track_table = dao_factory->getTrackDAO()->getTrackIds();
-	std::set<long> track_table_set( track_table->track_ids.begin(), track_table->track_ids.end() );
+	std::vector<long>* track_table_ids = dao_factory->getTrackDAO()->getTrackIds();
+	std::set<long> track_table_set( track_table_ids->begin(), track_table_ids->end() );
 	std::set<long> everything_set( everything_playlist->track_ids.begin(), everything_playlist->track_ids.end() );
-	dao_factory->getTrackDAO()->free( track_table );
+	dao_factory->getTrackDAO()->free( track_table_ids );
 
 	std::set<long> tracks_not_in_everything;
 	std::set<long> tracks_not_in_table;
