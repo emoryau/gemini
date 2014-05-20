@@ -10,6 +10,7 @@
 #include <set>
 #include <cstdlib>
 #include <glib.h>
+#include <boost/foreach.hpp>
 #include "PlaylistService.hpp"
 #include "GeminiException.hpp"
 
@@ -206,34 +207,34 @@ void PlaylistService::refreshEverythingPlaylist() {
 	std::set<long> tracks_not_in_everything;
 	std::set<long> tracks_not_in_table;
 
-	for( std::set<long>::iterator table_iter = track_table_set.begin(); table_iter != track_table_set.end(); table_iter++ ) {
-		if( everything_set.find( *table_iter ) == everything_set.end() ) {
-			tracks_not_in_everything.insert( *table_iter );
+	BOOST_FOREACH( long table_track_id, track_table_set ) {
+		if( everything_set.find( table_track_id ) == everything_set.end() ) {
+			tracks_not_in_everything.insert( table_track_id );
 		}
 	}
-	for( std::set<long>::iterator everything_iter = everything_set.begin(); everything_iter != everything_set.end(); everything_iter++ ) {
-		if( track_table_set.find( *everything_iter ) == track_table_set.end() ) {
-			tracks_not_in_table.insert( *everything_iter );
+	BOOST_FOREACH( long everything_track_id, everything_set ) {
+		if( track_table_set.find( everything_track_id ) == track_table_set.end() ) {
+			tracks_not_in_table.insert( everything_track_id );
 		}
 	}
 	g_message( "In Tracks table, but missing from everything playlist:" );
-	for( std::set<long>::iterator missing_iter = tracks_not_in_everything.begin(); missing_iter != tracks_not_in_everything.end(); missing_iter++ ) {
-		g_message("\t%d", *missing_iter);
+	BOOST_FOREACH( long missing_playlist_track_id, tracks_not_in_everything ) {
+		g_message( "\t%d", missing_playlist_track_id );
 	}
 	g_message( "In Everything Playlist, but missing from tracks table:" );
-	for( std::set<long>::iterator missing_iter = tracks_not_in_table.begin(); missing_iter != tracks_not_in_table.end(); missing_iter++ ) {
-		g_message("\t%d", *missing_iter);
+	BOOST_FOREACH( long missing_table_track_id, tracks_not_in_table ) {
+		g_message( "\t%d", missing_table_track_id );
 	}
 
 	// Rebuild everything playlist trackid vector in the same order, but skip trackids which are no longer in the tracks table
 	std::vector<long> new_everything_trackids;
 	new_everything_trackids.reserve( everything_playlist->track_ids.size() );
-	for( Playlist::TrackIdsIterator everything_iter = everything_playlist->track_ids.begin(); everything_iter != everything_playlist->track_ids.end(); everything_iter++ ) {
-		if( tracks_not_in_table.find( *everything_iter ) == tracks_not_in_table.end() ) {
-			new_everything_trackids.push_back( *everything_iter );
+	BOOST_FOREACH( long everything_track_ids, everything_playlist->track_ids ) {
+		if( tracks_not_in_table.find( everything_track_ids ) == tracks_not_in_table.end() ) {
+			new_everything_trackids.push_back( everything_track_ids );
 		} else {
 			// This track is being dropped from the playlist - advance the iterator if it points to this track
-			if( (*everything_iter) == (*everything_playlist_iter) ) {
+			if( everything_track_ids == (*everything_playlist_iter) ) {
 				everything_playlist_iter++;
 			}
 		}

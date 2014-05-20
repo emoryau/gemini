@@ -16,6 +16,14 @@ AC_PROG_CC
 PKG_CHECK_MODULES(GSTREAMER, [gstreamer-1.0 >= 1.0])
 PKG_CHECK_MODULES(SQLITE, [sqlite3 >= 3.0])
 
+BOOST_REQUIRE([1.53])
+BOOST_FOREACH
+# BOOST_INTERPROCESS()
+# ------------
+# Look for Boost.Interprocess
+BOOST_DEFUN([Interprocess], [BOOST_FIND_HEADER([boost/interprocess/mapped_region.hpp])])
+BOOST_INTERPROCESS
+
 # Checks for header files.
 
 # Checks for typedefs, structures, and compiler characteristics.

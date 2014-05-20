@@ -1,5 +1,14 @@
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
+/* Defined if the requested minimum BOOST version is satisfied */
+#undef HAVE_BOOST
+
+/* Define to 1 if you have <boost/foreach.hpp> */
+#undef HAVE_BOOST_FOREACH_HPP
+
+/* Define to 1 if you have <boost/interprocess/mapped_region.hpp> */
+#undef HAVE_BOOST_INTERPROCESS_MAPPED_REGION_HPP
+
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
